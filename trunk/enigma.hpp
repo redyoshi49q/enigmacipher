@@ -23,14 +23,14 @@
 #ifndef ENIGMA_HPP
 #define ENIGMA_HPP
 
-	#include "level.hpp"
+	#include "level.hpp"		//modified by Jacob
 	#include "trigger.hpp"
 	#include "layer.hpp"
 	#include "offsets.hpp"
 	#include "switch.hpp"
 	//#include "disk.hpp" //this should work, but it isn't incorporated yet
 	//#include "flipdisk.hpp" //this should work, but it isn't incorporated yet
-	#include "global.hpp"
+	#include "global.hpp"		//Modified by Jacob
 	#include "homebrew.hpp"
 	
 	#include <iostream> //this may no longer be necessary here

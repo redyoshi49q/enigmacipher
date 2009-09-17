@@ -26,6 +26,7 @@ ostream &out = cout, &g_out = cout;
 istream &in = cin, &g_in = cin;
 
 int completed[6] = {0,0,0,0,0,0};
+bool engineVersion = true;
 
 
 void cls() { //this only works on Windows. if this program works with wine,

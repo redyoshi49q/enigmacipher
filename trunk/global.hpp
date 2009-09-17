@@ -26,6 +26,7 @@
 	#include <iostream>
 	#include <cstdlib>
 	#include <string>
+	#include <time.h> //Jacob's Code
 	using namespace std;
 
 	//extern int completed[6]; //this will be used for story mode (when it is written)

@@ -30,6 +30,11 @@
 	#include <vector>
 	#include <deque>
 	#include <bitset>
+
+	#include <conio.h>		//Jacob's Code
+	#include <process.h>	//Jacob's Code
+	#include <sstream>		//Jacob's Code
+
 	using namespace std;
 
 	class Level {
@@ -43,6 +48,7 @@
 			~Level();
 			
 			int engine();
+			int engine2();  //Jacob's Code
 			
 			int getBuffer(int i) { return layers[i]->getBuffer(); } //done
 			int size() { return layers.size(); }

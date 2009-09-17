@@ -66,6 +66,8 @@
 
 #include "enigma.hpp"
 
+extern bool engineVersion;
+
 int main() {
 	
 	int input = -1;
@@ -109,6 +111,8 @@ int main() {
 			 << " 18: See license information again\n"
 			 << " 19: List of references\n"
 			 << " 20: Exit\n"
+			 << " 21: Toggle alternate engine version (current version is " //Jacob's Code
+			 << (engineVersion?"standard)\n":"alternate)\n")				//Jacob's Code
 			 << "Please enter your choice now:  ";
       
 		input = getInt();
@@ -119,12 +123,12 @@ int main() {
 			
 			case 1: {
 				
-				triggers.push_back(Trigger("\nenigma", " is what you desire.\n") );
+				triggers.push_back(Trigger("\nenigma", " is what you desire.") );		//Modified by Jacob
 
 				vector<string> reply;
-				reply.push_back(" cannot be given until \"enigma\" appears!\n");
-				reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n");
-				reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n");
+				reply.push_back(" cannot be given until \"enigma\" appears!");			//Modified by Jacob
+				reply.push_back("\nJust type \"thesolutiontotheriddle\", already!");	//Modified by Jacob
+				reply.push_back("\nJust type \"thesolutiontotheriddle\", already!");	//Modified by Jacob
 				
 				vector<bool> b1;
 				b1.push_back(false);
@@ -159,10 +163,10 @@ int main() {
 			
 			case 2: {
 				
-				triggers.push_back(Trigger("\nenigma", " is not up.\n") );
+				triggers.push_back(Trigger("\nenigma", " is not up.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nWhat is the opposite of \"up\"?\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nWhat is the opposite of \"up\"?") );
 				triggers.push_back(Trigger("\ndown", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -178,10 +182,10 @@ int main() {
 				
 			case 3: {
 				
-				triggers.push_back(Trigger("\nenigma", " is neither end.\n") );
+				triggers.push_back(Trigger("\nenigma", " is neither end.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nIf enigma is neither end, then it's obviously the ------.\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nIf enigma is neither end, then it's obviously the ------.") );
 				triggers.push_back(Trigger("\nmiddle", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -198,10 +202,10 @@ int main() {
 			case 4: {
 				
 				triggers.push_back(Trigger("\nenigma",
-					" looks and quacks like itself.\n") );
+					" looks and quacks like itself.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nIf it looks like a ---- and quacks like a ----, then it's a ----.\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nIf it looks like a ---- and quacks like a ----, then it's a ----.") );
 				triggers.push_back(Trigger("\nduck", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -217,11 +221,11 @@ int main() {
 				
 			case 5: {
 				
-				triggers.push_back(Trigger("\nenigma", " is equal to itself.\n",
+				triggers.push_back(Trigger("\nenigma", " is equal to itself.",
 					"\nAccess granted.\n", bitset<3>(6ul) ));
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nLook up the reflexive property.\nSometimes, one can expect different results\nfrom doing the same thing...\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nLook up the reflexive property.\nSometimes, one can expect different results\nfrom doing the same thing...") );
 				
 				help();
 				
@@ -235,10 +239,10 @@ int main() {
 			
 			case 6: {
 				
-				triggers.push_back(Trigger("\nenigma", " is a capital letter.\n") );
+				triggers.push_back(Trigger("\nenigma", " is a capital letter.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nThe password is \"acapitalletter\".  Have fun!\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nThe password is \"acapitalletter\".  Have fun!") );
 				triggers.push_back(Trigger("\nacapitalletter", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				triggers.push_back(Trigger("\nA", "", "\nVery funny...\n", bitset<3>(1ul) ));
@@ -258,8 +262,8 @@ int main() {
 				triggers.push_back(Trigger("\nenigma",
 					" is occasionally literal.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nThe password is \"occasionallyliteral\".\nAs you can see, enigma is occasionally literal.\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nThe password is \"occasionallyliteral\".\nAs you can see, enigma is occasionally literal.") );
 				triggers.push_back(Trigger("\noccasionallyliteral", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 					
@@ -278,10 +282,10 @@ int main() {
 			case 8: {
 				
 				triggers.push_back(Trigger("\nenigma",
-					" is a mode of transportation defined by three points.\n") );
+					" is a mode of transportation defined by three points.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nThree points define a -----.\nIt's time to go back to geometry class...\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nThree points define a -----.\nIt's time to go back to geometry class...") );
 				triggers.push_back(Trigger("\nplane", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -298,11 +302,11 @@ int main() {
 			case 9: {
 				
 				triggers.push_back(Trigger("\nenigma",
-					" is an annulus of information.\n") );
+					" is an annulus of information.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nYou may want to consider fetching a dictionary...\n") );
-				triggers.push_back(Trigger("\ncd", "", "\nCheck your capitalization...\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nYou may want to consider fetching a dictionary...") );
+				triggers.push_back(Trigger("\ncd", "", "\nCheck your capitalization...") );
 				triggers.push_back(Trigger("\nCD", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -322,10 +326,10 @@ int main() {
 			case 10: {
 				
 				triggers.push_back(Trigger("\nenigma",
-					" is a tiny country within a country.\n") );
+					" is a tiny country within a country.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nIt also happens to be the smallest country in the world...\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nIt also happens to be the smallest country in the world...") );
 				triggers.push_back(Trigger("\nvaticancity", "", "\nAccess Granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -344,10 +348,10 @@ int main() {
 			case 11: {
 				
 				triggers.push_back(Trigger("\nenigma",
-					" stands alone 'twixt water and stone.\n") );
+					" stands alone 'twixt water and stone.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nYou need to read a few more Redwall books!\n(Alternatively, you could creatively use an internet search engine...)\n  \"'Twixt water and stone I stand alone\n   Sounding burnt, but alive I survive!\"\n(This one is quite hard, even with searching!)\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nYou need to read a few more Redwall books!\n(Alternatively, you could creatively use an internet search engine...)\n  \"'Twixt water and stone I stand alone\n   Sounding burnt, but alive I survive!\"\n(This one is quite hard, even with searching!)") );
 				triggers.push_back(Trigger("\nash", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -364,10 +368,10 @@ int main() {
 			case 12: {
 				
 				triggers.push_back(Trigger("\nenigma",
-					" was what hurts the most.\n") );
+					" was what hurts the most.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nYou need to listen to Rascal Flatts (or use an online search engine).\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nYou need to listen to Rascal Flatts (or use an online search engine).") );
 				triggers.push_back(Trigger("\nwasbeingsoclose", "",
 					"\nYou're close enough...\nAccess granted.\n", bitset<3>(2ul) ));
 				triggers.push_back(Trigger("\nbeingsoclose", "", "\nAccess granted.\n",
@@ -389,10 +393,10 @@ int main() {
 			case 13: {
 				
 				triggers.push_back(Trigger("\nenigma",
-					"\n128-10-93-85-10-128-98-112-6-6-25-126-39-1-68-78\n") );
+					"\n128-10-93-85-10-128-98-112-6-6-25-126-39-1-68-78") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nIt appears that you've never read Digital Fortress...\n(You could also use an internet search engine if you'd like.)\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nIt appears that you've never read Digital Fortress...\n(You could also use an internet search engine if you'd like.)") );
 				triggers.push_back(Trigger("\nwearewatchingyou", "",
 					"\nAccess granted.\n", bitset<3>(2ul) ));
 				
@@ -412,10 +416,10 @@ int main() {
 				vector<bool> tripsFlag, beatsLevel, easterEgg;
 				
 				for (int i = 0; i < 3; i++) {
-					replies.push_back(" is broken.  Please try again later.\n");
+					replies.push_back(" is broken.  Please try again later.");
 				}
 				for (int i = 3; i < 10; i++) {
-					replies.push_back(" is still broken.  Are you sure you fixed it?\n");
+					replies.push_back(" is still broken.  Are you sure you fixed it?");
 				}
 				replies.push_back(" is where your voice is heard without words.\n");
 				
@@ -431,18 +435,18 @@ int main() {
 				
 				triggers.push_back(Trigger("\nenigma", replies, tripsFlag, beatsLevel, easterEgg, layers) );
 				
-				replies.assign(1, " cannot be given until \"enigma\" appears!\n");
+				replies.assign(1, " cannot be given until \"enigma\" appears!");
 				for (int i = 1; i < 3; i++) {
-					replies.push_back("\nWhat are you looking for, anyway?\n");
+					replies.push_back("\nWhat are you looking for, anyway?");
 				}
-				replies.push_back("\nIt seems enigma should be fixed now.\nWhy don't you make \"enigma\" appear again?\n");
-				replies.push_back("\nIf at first you don't succeed, repair enigma again.\n");
+				replies.push_back("\nIt seems enigma should be fixed now.\nWhy don't you make \"enigma\" appear again?");
+				replies.push_back("\nIf at first you don't succeed, repair enigma again.");
 				for (int i = 5; i < 9; i++) {
-					replies.push_back("\nBrute force fixes everything (even the password utility).\n");
+					replies.push_back("\nBrute force fixes everything (even the password utility).");
 				}
-				replies.push_back("\nYou fixed the password utility...  but did you ever fix enigma?\n");
-				replies.push_back("\nenigma really has been fixed this time...  seriously!\n");
-				replies.push_back("\nClawing up my eyes,\nI'm feeling your arms around me\nOn enigma.\nIt's time to go,\nI'm hearing your voice without words\nOn enigma.\n(If you don't get it, use a search engine.)\n");
+				replies.push_back("\nYou fixed the password utility...  but did you ever fix enigma?");
+				replies.push_back("\nenigma really has been fixed this time...  seriously!");
+				replies.push_back("\nClawing up my eyes,\nI'm feeling your arms around me\nOn enigma.\nIt's time to go,\nI'm hearing your voice without words\nOn enigma.\n(If you don't get it, use a search engine.)");
 				
 				tripsFlag.assign(7, false);
 				tripsFlag[1] = true;
@@ -453,7 +457,7 @@ int main() {
 				triggers.push_back(Trigger("\nhelp", replies, tripsFlag, beatsLevel, easterEgg, layers) );
 				
 				replies.assign(2, "");
-				replies.push_back("\nYes, but what *is* the solution to the riddle?\n");
+				replies.push_back("\nYes, but what *is* the solution to the riddle?");
 				replies.push_back("");
 				tripsFlag.assign(1, false);
 				
@@ -463,15 +467,15 @@ int main() {
 				
 				replies.assign(2, "");
 				for (int i = 2; i < 4; i++) {
-					replies.push_back("\nenigma has been fixed.\n");
+					replies.push_back("\nenigma has been fixed.");
 				}
 				for (int i = 4; i < 6; i++) {
-					replies.push_back(" is broken.  Please try again later.\n");
+					replies.push_back(" is broken.  Please try again later.");
 				}
-				replies.push_back(" is still very broken.\n");
-				replies.push_back(" is still quite broken.\n");
-				replies.push_back("\nAfter a less-than-gentle love tap, the password utility\nhas been returned to full functionality.\n");
-				replies.push_back("\nenigma has been fixed.\nThank you for using the password utility.\nHave a nice day!\n");
+				replies.push_back(" is still very broken.");
+				replies.push_back(" is still quite broken.");
+				replies.push_back("\nAfter a less-than-gentle love tap, the password utility\nhas been returned to full functionality.");
+				replies.push_back("\nenigma has been fixed.\nThank you for using the password utility.\nHave a nice day!");
 				replies.push_back("");
 				
 				tripsFlag.assign(11, false);
@@ -521,10 +525,10 @@ int main() {
 				layers.push_back(new Offsets(2, 30, -30, 8, 6) );
 			
 				triggers.push_back(Trigger("\nenigma",
-					" speaks its only word nevermore.\n") );
+					" speaks its only word nevermore.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nWhile I nodded, nearly napping, suddenly there came a tapping,\nAs of some one gently rapping, rapping at my chamber door.\n\"'Tis some visitor,\" I muttered, \"tapping at my chamber door.\nEnigma's this, and nothing more.\"\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nWhile I nodded, nearly napping, suddenly there came a tapping,\nAs of some one gently rapping, rapping at my chamber door.\n\"'Tis some visitor,\" I muttered, \"tapping at my chamber door.\nEnigma's this, and nothing more.\"") );
 				triggers.push_back(Trigger("\nraven", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -553,10 +557,10 @@ int main() {
 				
 				cls();
 	
-				triggers.push_back(Trigger("\nenigma", " is the answer to everything.\n") );
+				triggers.push_back(Trigger("\nenigma", " is the answer to everything.") );
 				triggers.push_back(Trigger("\nhelp",
-					" cannot be given until \"enigma\" appears!\n",
-					"\nenigma is also the answer to life and the universe.\n") );
+					" cannot be given until \"enigma\" appears!",
+					"\nenigma is also the answer to life and the universe.") );
 				triggers.push_back(Trigger("\n42", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 				
@@ -588,6 +592,13 @@ int main() {
 			case 20:
 				
 				return 0;
+
+			case 21:  //Jacob's Code
+				if (engineVersion)
+					engineVersion = false;
+				else
+					engineVersion = true;
+				break;
 				
 			default:
 				
@@ -606,14 +617,14 @@ int main() {
 
 void runLevel(Level &level, vector<bool> &beaten, int index) {
 
-	int returned = level.engine();
+	int returned = (engineVersion?level.engine():level.engine2());  //Jacob modified this code
 	
 	if (returned == 1 || returned == 3) {
 		beaten[index] = true;
 	}
 	
 	if (returned == 3) {
-		out << "\nYou got the easter egg!\n";
+		out << "\nYou got the easter egg!";
 	}
 	
 	out << "\nPress enter to continue.";
@@ -659,16 +670,24 @@ void menu() {
 
 void help() {
 	
-	out << "Welcome to Enigma!\n"
-		 << "Type a line of text, then press enter.\n"
-		 << "If \"enigma\" appears in the generated text on its own line,\n"
-		 << "you will get a password hint.\n"
-		 << "If you need more help,\n"
-		 << "get \"help\" to appear in the generated text on its own line.\n"
-		 << "To beat the level, get the password to appear!\n\n";
+	if (engineVersion)
+		out << "Welcome to Enigma!\n"
+			 << "Type a line of text, then press enter.\n"
+			 << "If \"enigma\" appears in the generated text on its own line,\n"
+			 << "you will get a password hint.\n"
+			 << "If you need more help,\n"
+			 << "get \"help\" to appear in the generated text on its own line.\n"
+			 << "To beat the level, get the password to appear!\n\n";
+	else
+		out << "Welcome to Enigma!\n"
+			<< "If \"enigma\" appears in the generated text on its own line,\n"
+			 << "you will get a password hint.\n"
+			 << "If you need more help,\n"
+			 << "get \"help\" to appear in the generated text on its own line.\n"
+			 << "To beat the level, get the password to appear!\n"
+			 << "Press ~ three times to clear the screen or press\n\"ESC\" three times to return to the menu.\n\n";
 			//this is merely so that alpha/beta testers will have some idea
 				//as to what they're supposed to do...
-	
 }
 
 void about() {

@@ -85,6 +85,7 @@ int Level::engine() {
 			default:
 				
 				activateTrigger(x, victory, easterEgg);
+				shiftTriggerBuffer('\n');
 				
 				break;
 			
@@ -100,6 +101,79 @@ int Level::engine() {
 		//2 for easter egg, but no victory (do nothing)
 		//3 for victory with easter egg
 	
+}
+
+int Level::engine2()	//Jacob's Code
+{
+	//stringstream buffer;
+	//string currentString;
+	int idx = 0, idx2 = 0;
+	char ch;
+	//bool test = true;
+
+	triggerBuffer.assign(getMaxTriggerLength(), '\n');
+	setBuffers();
+
+	bool victory = false;
+	bool easterEgg = false;
+
+	while(!victory)
+	{
+		ch = _getch();
+
+		switch(static_cast<int>(ch))
+		{
+		case 13:
+			shiftTriggerBuffer('\n');
+			//currentString = buffer.str();
+			//buffer.str("");
+			break;
+
+		case 27:
+			idx++;
+			if(idx == 3)
+			{
+				return 2;
+			}
+			break;
+
+		case 32:
+			shiftTriggerBuffer(' ');
+			break;
+			
+		case 96:
+			idx2++;
+			if(idx2 == 3)
+			{
+				cls();
+				idx2 = 0;
+			}
+			break;
+
+		default:
+			idx = idx2 = 0;
+			cycleChar(ch);
+			//shiftTriggerBuffer(ch);
+			//buffer << ch;
+			//cout << ch;
+			break;
+		}
+
+		switch(int x = checkTriggers())
+		{
+		case -1:
+			break;
+
+		default:
+			activateTrigger(x, victory, easterEgg);
+			shiftTriggerBuffer('\n');
+			break;
+		}
+
+	}
+
+	return (easterEgg * 2 + victory);
+
 }
 
 int Level::getMaxTriggerLength() {

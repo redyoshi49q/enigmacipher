@@ -66,8 +66,6 @@
 
 #include "enigma.hpp"
 
-extern bool engineVersion;
-
 int main() {
 	
 	int input = -1;
@@ -685,7 +683,7 @@ void help() {
 			 << "If you need more help,\n"
 			 << "get \"help\" to appear in the generated text on its own line.\n"
 			 << "To beat the level, get the password to appear!\n"
-			 << "Press ~ three times to clear the screen or press\n\"ESC\" three times to return to the menu.\n\n";
+			 << "Press TAB three times to clear the screen or press\n\"Backspace\" three times to return to the menu.\n\n";
 			//this is merely so that alpha/beta testers will have some idea
 				//as to what they're supposed to do...
 }

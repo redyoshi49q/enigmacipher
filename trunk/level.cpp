@@ -123,13 +123,16 @@ int Level::engine2()	//Jacob's Code
 
 		switch(static_cast<int>(ch))
 		{
+		case 224:
+			break;
+
 		case 13:
 			shiftTriggerBuffer('\n');
 			//currentString = buffer.str();
 			//buffer.str("");
 			break;
 
-		case 27:
+		case static_cast<int>('\b'):
 			idx++;
 			if(idx == 3)
 			{
@@ -137,11 +140,11 @@ int Level::engine2()	//Jacob's Code
 			}
 			break;
 
-		case 32:
+		case static_cast<int>(' '):
 			shiftTriggerBuffer(' ');
 			break;
 			
-		case 96:
+		case static_cast<int>('\t'):
 			idx2++;
 			if(idx2 == 3)
 			{

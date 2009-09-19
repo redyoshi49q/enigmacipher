@@ -39,6 +39,8 @@
 	#include <vector>
 	#include <bitset>
 	using namespace std;
+
+	extern bool engineVersion;
 	
 	int main();
 	void runLevel(Level&, vector<bool>&, int);

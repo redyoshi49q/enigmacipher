@@ -65,6 +65,11 @@
  *
  * Revision History:
  * 
+ * r6:
+ *   resubmission to *actually* include Option class
+ *     Option class was excluded by accident in r5
+ *   author:  redyoshi49q (Ethan)
+ *
  * r5:
  *   changes to some variable locations, clean up of code and addition of Option class
  *     main menu interface changed and new levels added to form tutorial

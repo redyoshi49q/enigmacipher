@@ -23,14 +23,15 @@
 #ifndef ENIGMA_HPP
 #define ENIGMA_HPP
 
-	#include "level.hpp"		//modified by Jacob
+	#include "level.hpp"
 	#include "trigger.hpp"
 	#include "layer.hpp"
 	#include "offsets.hpp"
 	#include "switch.hpp"
 	//#include "disk.hpp" //this should work, but it isn't incorporated yet
 	//#include "flipdisk.hpp" //this should work, but it isn't incorporated yet
-	#include "global.hpp"		//Modified by Jacob
+	#include "option.hpp"
+	#include "global.hpp"
 	#include "homebrew.hpp"
 	
 	#include <iostream> //this may no longer be necessary here
@@ -39,16 +40,17 @@
 	#include <vector>
 	#include <bitset>
 	using namespace std;
-
-	extern bool engineVersion;
+	
+	extern vector<bool> beaten;
+	extern int MAX_MENU_INDEX; //do I need to make this an extern?
 	
 	int main();
-	void runLevel(Level&, vector<bool>&, int);
+	void runLevel(Level&, int);
 	void welcome();
 	void menu();
 	void help();
 	void about();
 	void exit();
-	void referenced(vector<bool>&);
+	void referenced();
 
 #endif //ENIGMA_HPP

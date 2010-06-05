@@ -25,22 +25,23 @@
 ostream &out = cout, &g_out = cout;
 istream &in = cin, &g_in = cin;
 
-int completed[6] = {0,0,0,0,0,0};
-bool engineVersion = true;
+//int completed[6] = {0,0,0,0,0,0};
 
 
-void cls() { //this only works on Windows. if this program works with wine,
-	//this might stay Windows only
-	/*
-	if (%OS%.matches("Windows*")) {*/
-		system("cls");/*
-	} else if (%OS%.matches("Linux*")) {
+void cls() {
+	
+	#if defined(_WIN32)
+		system("cls");
+	#elif defined(linux)
 		system("clear");
-	}
-	*/
-		//this needs code to distinguish between Windows and Linux OR code that
-		//will clear the screen independently of the OS
-		//the above code might work, but it might not...
+	#else
+		//operating system isn't recognized, do nothing
+		  //this isn't *really* necessary; other systems can live without this
+		  //in the worst case scenario.
+	#endif
+	
+		//this should distinguish between Windows and Linux
+		//the above code should work, but it might not...
 }
 
 //this is a stub
@@ -54,7 +55,21 @@ int getInt() {
 	
 }
 
-void pause() {
+int digits(int input) {
+
+	input = abs(input);
+	int digits = 0;
+	
+	while (input != 0) {
+		input /= 10;
+		digits++;
+	}
+	
+	return digits;
+
+}
+
+void pauseOutput() {
 	
 	string dummy;
 	getline(in, dummy); 

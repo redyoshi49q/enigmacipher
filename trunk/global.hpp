@@ -26,7 +26,7 @@
 	#include <iostream>
 	#include <cstdlib>
 	#include <string>
-	#include <time.h> //Jacob's Code
+	#include <time.h>
 	using namespace std;
 
 	//extern int completed[6]; //this will be used for story mode (when it is written)
@@ -37,7 +37,8 @@
 	
 	void cls();
 	int getInt();
-	void pause();
+	int digits(int);
+	void pauseOutput();
 	void complain(string);
 
 #endif //GLOBAL_HPP

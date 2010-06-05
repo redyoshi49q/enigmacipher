@@ -57,7 +57,7 @@ int Level::engine() {
 	
 	setBuffers();
 	
-	char input;
+	char input, lastChar = 'a';
 	bool victory = false;
 	bool easterEgg = false;
 	
@@ -65,17 +65,28 @@ int Level::engine() {
 		
 		input = g_in.get();
 		
-		if (input == '\n' || input == ' ') {
+		if (input == '\n' || input == ' ' || input == '\t') {
 			
 			shiftTriggerBuffer(input);
 			
-		} else { //if any other characters are to be recognized, the code for
+			if (input == '\n') {
+				if (lastChar == '\n' && Options[CLEAR_IN_GAME] == "Enabled") {
+					cls();
+				} else if (lastChar == '\t') {
+					out << "Level has been exited.\n";
+					return (easterEgg * 2 + victory);
+				}
+			}
+			
+		} else { //if any other special characters are to be recognized, the code for
 			//that needs to go as an else if clause before cycleChar() is called.
-			//otherwise, things will severely break
+			//otherwise, things might break
 			
 			cycleChar(input);
 			
 		}
+		
+		lastChar = input;
 		
 		switch (int x = checkTriggers()) {
 			
@@ -84,8 +95,11 @@ int Level::engine() {
 			
 			default:
 				
+				bool newLine = isNotNull(x);
+				
 				activateTrigger(x, victory, easterEgg);
-				shiftTriggerBuffer('\n');
+				
+				if (newLine) { shiftTriggerBuffer('\n'); }
 				
 				break;
 			
@@ -103,8 +117,9 @@ int Level::engine() {
 	
 }
 
-int Level::engine2()	//Jacob's Code
-{
+#ifndef linux //this does *not* yet work on linux
+int Level::engine2() {
+
 	//stringstream buffer;
 	//string currentString;
 	int idx = 0, idx2 = 0;
@@ -117,60 +132,64 @@ int Level::engine2()	//Jacob's Code
 	bool victory = false;
 	bool easterEgg = false;
 
-	while(!victory)
-	{
+	while(victory == false) {
 		ch = _getch();
 
-		switch(static_cast<int>(ch))
-		{
-		case 224:
-			break;
+		switch(static_cast<int>(ch)) {
+			case 224:
+				ch = _getch(); //this discards the extra character in
+					//the buffer
+				break;
 
-		case 13:
-			shiftTriggerBuffer('\n');
-			//currentString = buffer.str();
-			//buffer.str("");
-			break;
+			case 13:
+				idx = idx2 = 0;
+				shiftTriggerBuffer('\n');
+				//currentString = buffer.str();
+				//buffer.str("");
+				break;
 
-		case static_cast<int>('\b'):
-			idx++;
-			if(idx == 3)
-			{
-				return 2;
-			}
-			break;
-
-		case static_cast<int>(' '):
-			shiftTriggerBuffer(' ');
-			break;
-			
-		case static_cast<int>('\t'):
-			idx2++;
-			if(idx2 == 3)
-			{
-				cls();
+			case static_cast<int>('\b'):
+				idx++;
 				idx2 = 0;
-			}
-			break;
+				if(idx == 3)
+				{
+					return 2;
+				}
+				break;
 
-		default:
-			idx = idx2 = 0;
-			cycleChar(ch);
-			//shiftTriggerBuffer(ch);
-			//buffer << ch;
-			//cout << ch;
-			break;
+			case static_cast<int>(' '):
+				idx = idx2 = 0;
+				shiftTriggerBuffer(' ');
+				break;
+				
+			case static_cast<int>('\t'):
+				idx2++;
+				idx = 0;
+				if(idx2 == 3) {
+					if (Options[CLEAR_IN_GAME] == "Enabled") { cls(); }
+					idx2 = 0;
+				}
+				break;
+
+			default:
+				idx = idx2 = 0;
+				cycleChar(ch);
+				//shiftTriggerBuffer(ch);
+				//buffer << ch;
+				//cout << ch;
+				break;
+				
 		}
 
-		switch(int x = checkTriggers())
-		{
-		case -1:
-			break;
+		switch(int x = checkTriggers() ) {
+			case -1:
+				break;
 
-		default:
-			activateTrigger(x, victory, easterEgg);
-			shiftTriggerBuffer('\n');
-			break;
+			default:
+				bool newLine = isNotNull(x);
+				activateTrigger(x, victory, easterEgg);
+				if (newLine) { shiftTriggerBuffer('\n'); }
+				break;
 		}
 
 	}
@@ -178,6 +197,7 @@ int Level::engine2()	//Jacob's Code
 	return (easterEgg * 2 + victory);
 
 }
+#endif
 
 int Level::getMaxTriggerLength() {
 	
@@ -238,7 +258,7 @@ void Level::shiftTriggerBuffer(char input) {
 	triggerBuffer.push_back(input);
 
 	triggerBuffer.pop_front();
-			
+	
 }
 
 void Level::setBuffers() {

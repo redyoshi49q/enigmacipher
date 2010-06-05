@@ -24,6 +24,7 @@
 
 	#include "trigger.hpp"
 	#include "layer.hpp"
+	#include "option.hpp"
 	#include "global.hpp"
 
 	#include <iostream>
@@ -31,9 +32,13 @@
 	#include <deque>
 	#include <bitset>
 
-	#include <conio.h>		//Jacob's Code
-	#include <process.h>	//Jacob's Code
-	#include <sstream>		//Jacob's Code
+	#if defined(_WIN32)
+		#include <conio.h>
+		#include <process.h>
+	#elif defined(linux)
+		//I need linix compatibility here.
+	#endif
+	#include <sstream>
 
 	using namespace std;
 
@@ -48,7 +53,9 @@
 			~Level();
 			
 			int engine();
-			int engine2();  //Jacob's Code
+			#ifdef _WIN32 //this does *not* yet work on linux
+				int engine2();
+			#endif
 			
 			int getBuffer(int i) { return layers[i]->getBuffer(); } //done
 			int size() { return layers.size(); }
@@ -58,6 +65,7 @@
 			int checkTriggers(); //done
 			
 			void activateTrigger(int, bool&, bool&); //done
+			bool isNotNull(int x) { return triggers[x].isNotNull(flags); }
 
 			void cycleChar(char);
 			void shiftTriggerBuffer(char);

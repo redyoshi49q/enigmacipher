@@ -164,10 +164,11 @@ bool Trigger::checkTrigger(deque<char> testChars) {
 	
 	for (int i = 0; i < keyWord.size(); i++) {
 		
-		if (testChars[testChars.size() - i - 1] !=
-			keyWord[keyWord.size() - i - 1]) { return false; }	
-		
-	}
+		if ( (testChars[testChars.size() - i - 1] !=
+			keyWord[keyWord.size() - i - 1]) &&
+			(keyWord[keyWord.size() - i - 1] != '\t') )
+				{ return false; }	
+	} // '\t' is a wildcard character in triggers and will match any input
 	
 	return true;
 	

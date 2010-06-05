@@ -72,6 +72,8 @@
 			
 			bool checkTrigger(deque<char>); //done
 			
+			bool isNotNull(int &flag) { return (reply[min(flag, int(reply.size())-1)] != ""); }
+			
 			int getNumOfFlags(); //done
 			
 			int getLengthOfTrigger(); //done

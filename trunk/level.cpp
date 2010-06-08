@@ -73,7 +73,10 @@ int Level::engine() {
 				if (lastChar == '\n' && Options[CLEAR_IN_GAME] == "Enabled") {
 					cls();
 				} else if (lastChar == '\t') {
-					out << "Level has been exited.\n";
+					out << "Level has been exited.\nPress enter to continue.";
+					pauseOutput();
+					cls();
+
 					return (easterEgg * 2 + victory);
 				}
 			}
@@ -189,7 +192,11 @@ int Level::engine2() {
 				bool newLine = isNotNull(x);
 				activateTrigger(x, victory, easterEgg);
 				if (newLine) { shiftTriggerBuffer('\n'); }
-				break;
+				break;	out << "\nPress enter to continue.";
+	
+	pauseOutput();
+	cls();
+
 		}
 
 	}

@@ -45,12 +45,13 @@
 	extern int MAX_MENU_INDEX; //do I need to make this an extern?
 	
 	int main();
-	void runLevel(Level&, int);
+	int runLevel(Level&, int);
 	void welcome();
 	void menu();
 	void help();
 	void about();
 	void exit();
 	void referenced();
+	void nextLevel(int&, char&, int, char);
 
 #endif //ENIGMA_HPP

@@ -107,8 +107,8 @@ int main() {
 
 	string input;
 	Level level;
-	int type;
-	char subtype;
+	int type = 0, oldType = 0;
+	char subtype = '?', oldSubtype = '?';
 	int index = 0;
 	
 	while (true) { //an input of 'h' returns from the main function
@@ -117,64 +117,69 @@ int main() {
 		
 		triggers.clear();
 		layers.clear();
-	
-    	out << "Welcome to Enigma!\n"
-			<< "Please choose one of the following options:\n"
-			<< "(If you have never played before, you want option 1.)\n";
+		
+		if (type == oldType && subtype == oldSubtype) {
+			//this is executed if the user is returning to the menu.
+		
+		 	out << "Welcome to Enigma!\n"
+				<< "Please choose one of the following options:\n"
+				<< "(If you have never played before, you want option 1.)\n";
 			
-		switch (index) {
-			case 0:
-				out << "  1   : Practice Level (no encryption)\n"
-					<< "  2a-b: Static Offset\n"
-					<< "  3a-b: Buffer\n"
-					<< "  4a-c: Static Offset with Buffer\n"
-					<< "  5: Dynamic Offset\n"
-					<< "  6: Variable Offset\n"
-					<< "  7: Easy Switch Level\n"
-					<< "  8: Intermediate Level\n"
-					<< "  9: Easy Stacked Level\n"
-					<< " 10: Hard Switch Level\n";
-				break;
+			switch (index) {
+				case 0:
+					out << "  1   : Practice Level (no encryption)\n"
+						<< "  2a-b: Static Offset\n"
+						<< "  3a-b: Buffer\n"
+						<< "  4a-c: Static Offset with Buffer\n"
+						<< "  5: Dynamic Offset\n"
+						<< "  6: Variable Offset\n"
+						<< "  7: Easy Switch Level\n"
+						<< "  8: Intermediate Level\n"
+						<< "  9: Easy Stacked Level\n"
+						<< " 10: Hard Switch Level\n";
+					break;
 				
-			case 1:
-				out << " 11: Advanced Level (reserved for the persistent)\n"
-					<< " 12: Hard Stacked Level (reserved for the highly persistent)\n"
-					<< " 13: Expert Level (reserved for the insane)\n"
-					<< " 14: Evil Level (reserved for the very insane)\n"
-					<< " 15: Furious Level (reserved for the particularly insane)\n"
-					<< "\n\n\n\n\n"; //this prevents the letter based menu from moving
-				break;
+				case 1:
+					out << " 11: Advanced Level (reserved for the persistent)\n"
+						<< " 12: Hard Stacked Level (reserved for the highly persistent)\n"
+						<< " 13: Expert Level (reserved for the insane)\n"
+						<< " 14: Evil Level (reserved for the very insane)\n"
+						<< " 15: Furious Level (reserved for the particularly insane)\n"
+						<< "\n\n\n\n\n"; //this prevents the letter based menu from moving
+					break;
 				
-			default:
-				out << "Something is seriously broken here...";
-				//this case should never be called.
-				break;
+				default:
+					out << "Something is seriously broken here...";
+					//this case should never be called.
+					break;
 				
-		}
+			}
 		
-		if (index > 0) {
-			out << "  a: Show easier levels\n";
-		} else if (MAX_MENU_INDEX > 1) {
-			out << endl;
-		}
+			if (index > 0) {
+				out << "  a: Show easier levels\n";
+			} else if (MAX_MENU_INDEX > 1) {
+				out << endl;
+			}
 		
-		if (index < MAX_MENU_INDEX) {
-			out << "  b: Show harder levels\n";
-		} else if (MAX_MENU_INDEX > 1) {
-			out << endl;
-		}
+			if (index < MAX_MENU_INDEX) {
+				out << "  b: Show harder levels\n";
+			} else if (MAX_MENU_INDEX > 1) {
+				out << endl;
+			}
 		
-		out << "  c: Simple Level Builder\n"
-			<< "  d: Access homebrew levels (if any)\n"
-			<< "  e: See license information again\n"
-			<< "  f: List of references\n"
-			<< "  g: Change game options\n"
-			<< "  h: Exit\n"
-			<< "Please enter your choice now:  ";
-      
-		in >> input;
-		in.ignore();
-		out << endl;			
+			out << "  c: Simple Level Builder\n"
+				<< "  d: Access homebrew levels (if any)\n"
+				<< "  e: See license information again\n"
+				<< "  f: List of references\n"
+				<< "  g: Change game options\n"
+				<< "  h: Exit\n"
+				<< "Please enter your choice now:  ";
+		   
+			in >> input;
+			in.ignore();
+			out << endl;			
+			
+		}
 		
 		if (input[0] >= 'a' && input[0] <= 'h') switch (input[0]) {
 			case 'a':
@@ -259,11 +264,21 @@ int main() {
 				
 		} else {
 			
-			type = atoi(input.c_str() );
-			if (input.size() > digits(type)) {
-				subtype = input[digits(type)];
-			} else {
-				subtype = '?';
+			if (type == oldType && subtype == oldSubtype) {
+				//this is executed if the user returned to the menu
+				
+				type = oldType = atoi(input.c_str() );
+				if (input.size() > digits(type)) {
+					subtype = oldSubtype= input[digits(type)];
+				} else {
+					subtype = oldSubtype = '?';
+				}
+				
+			} else { //the user did not return to the menu
+			
+				oldType = type;
+				oldSubtype = subtype;
+				
 			}
 			
 			switch (type) {
@@ -309,7 +324,9 @@ int main() {
 					
 					level = Level(new Offsets(), triggers);
 					
-					runLevel(level, 0);
+					if (runLevel(level, 0) % 2 == 1) { //is either 1 or 3, level was won
+						nextLevel(type, subtype, 2, 'a');
+					}
 					
 					}
 					
@@ -336,7 +353,9 @@ int main() {
 					
 					level = Level(new Offsets(1), triggers);
 					
-					runLevel(level, 1);
+					if (runLevel(level, 1) % 2 == 1) { //is either 1 or 3, level was won
+						nextLevel(type, subtype, 2, 'b');
+					}
 					
 					break;
 				
@@ -370,7 +389,9 @@ int main() {
 					
 					level = Level(new Offsets(-1), triggers);
 					
-					runLevel(level, 2);
+					if (runLevel(level, 2) % 2 == 1) { //is either 1 or 3, level was won
+						nextLevel(type, subtype, 3, 'a');
+					}
 					
 					break;
 					
@@ -416,7 +437,9 @@ int main() {
 					
 					level = Level(new Offsets(0, 0, 0, 2), triggers);
 					
-					runLevel(level, 3);
+					if (runLevel(level, 3) % 2 == 1) { //is either 1 or 3, level was won
+						nextLevel(type, subtype, 3, 'b');
+					}
 					
 					break;
 					
@@ -439,7 +462,9 @@ int main() {
 					
 					level = Level(new Offsets(0, 0, 0, 5), triggers);
 					
-					runLevel(level, 4);
+					if (runLevel(level, 4) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 4, 'a');
+					}
 					
 					break;
 					
@@ -476,8 +501,10 @@ int main() {
 					
 					level = Level(new Offsets(-2, 0, 0, 1), triggers);
 					
-					runLevel(level, 5);
-					
+					if (runLevel(level, 5) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 4, 'b');
+					}
+
 					}
 					
 					break;
@@ -504,7 +531,9 @@ int main() {
 					
 					level = Level(new Offsets(3, 0, 0, 4), triggers);
 					
-					runLevel(level, 6);
+					if (runLevel(level, 6) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 4, 'c');
+					}
 					
 					break;
 					
@@ -531,7 +560,9 @@ int main() {
 					
 					level = Level(new Offsets(-5, 0, 0, 4), triggers);
 					
-					runLevel(level, 7);
+					if (runLevel(level, 7) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 5, '?');
+					}
 					
 					break;
 					
@@ -574,7 +605,9 @@ int main() {
 					
 					level = Level(new Offsets(0, -1), triggers);
 					
-					runLevel(level, 8);
+					if (runLevel(level, 8) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 6, '?');
+					}
 					
 					}
 					
@@ -596,7 +629,9 @@ int main() {
 					
 					level = Level(new Offsets(0, 0, 1), triggers);
 					
-					runLevel(level, 9);
+					if (runLevel(level, 9) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 7, '?');
+					}
 					
 					}
 					
@@ -620,7 +655,9 @@ int main() {
 						new Offsets(3), new Offsets(-4, 0, 0, 3) ),
 						triggers);
 					
-					runLevel(level, 10);
+					if (runLevel(level, 10) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 8, '?');
+					}
 					
 					}
 					
@@ -642,7 +679,9 @@ int main() {
 					
 					level = Level(new Offsets(-7, -2, 1), triggers);
 					
-					runLevel(level, 11);
+					if (runLevel(level, 11) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 9, '?');
+					}
 					
 					}
 					
@@ -668,7 +707,9 @@ int main() {
 					
 					level = Level(layers, triggers);
 					
-					runLevel(level, 12);
+					if (runLevel(level, 12) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 10, '?');
+					}
 					
 					}
 					
@@ -692,7 +733,9 @@ int main() {
 						new Offsets(0, 3, 0, 4), new Offsets(0, 0, -2, 6) ),
 						triggers);
 					
-					runLevel(level, 13);
+					if (runLevel(level, 13) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 11, '?');
+					}
 					
 					}
 					
@@ -714,7 +757,9 @@ int main() {
 					
 					level = Level(new Offsets(14, -1, -2, 3, 6), triggers);
 					
-					runLevel(level, 14);
+					if (runLevel(level, 14) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 12, '?');
+					}
 					
 					}
 					
@@ -741,7 +786,9 @@ int main() {
 					
 					level = Level(layers, triggers);
 					
-					runLevel(level, 15);
+					if (runLevel(level, 15) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 13, '?');
+					}
 					
 					}
 					
@@ -763,7 +810,9 @@ int main() {
 					
 					level = Level(new Offsets(107, -84, 34, 37, 17), triggers);
 					
-					runLevel(level, 16);
+					if (runLevel(level, 16) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 14, '?');
+					}
 					
 					}
 					
@@ -873,7 +922,9 @@ int main() {
 					
 					level = Level(layers, triggers);
 					
-					runLevel(level, 17);
+					if (runLevel(level, 17) % 2 == 1) { //is either 1 or 3
+						nextLevel(type, subtype, 15, '?');
+					}
 					
 					}
 					
@@ -899,7 +950,7 @@ int main() {
 					
 					level = Level(layers, triggers);
 					
-					runLevel(level, 18);
+					int dummy = runLevel(level, 18);
 					
 					}
 				
@@ -922,7 +973,7 @@ int main() {
 	
 }
 
-void runLevel(Level &level, int index) {
+int runLevel(Level &level, int index) {
 	
 	int returned;
 	
@@ -934,7 +985,7 @@ void runLevel(Level &level, int index) {
 	#endif
 		
 	
-	if (returned == 1 || returned == 3) {
+	if (returned % 2 == 1) { //returned == 1 || returned == 3
 		beaten[index] = true;
 	}
 	
@@ -942,9 +993,7 @@ void runLevel(Level &level, int index) {
 		out << "\nYou got the easter egg!";
 	}
 	
-	out << "\nPress enter to continue.";
-	
-	pauseOutput();
+	return returned;
 	
 }
 
@@ -961,7 +1010,12 @@ void welcome() {
 		 << "GNU General Public License for more details.\n\n"
 		 << "You should have received a copy of the GNU General Public License\n"
 		 << "along with Enigma Cipher as the file \"copying.txt\".  If not, see\n"
-		 << "<http://www.gnu.org/licenses/>.\n\n"
+		 << "<http://www.gnu.org/licenses/>.\n\nPress enter to continue.";
+		
+	pauseOutput();
+	cls();
+	
+	out << "Enigma Cipher  Copyright (C) 2009  Ethan Warth (a.k.a. redyoshi49q)\n\n"
 		 << "It is believed that references to copyrighted materials in the riddles\n"
 		 << "incorporated in this program are a small proportion of their respective\n"
 		 << "works, and do not inhibit the copyright holders' abilitiy to market their\n"
@@ -1141,6 +1195,21 @@ void referenced() {
 	
 	pauseOutput();
 	cls();
+	
+}
+
+void nextLevel(int &type, char &subtype, int nextType, char nextSubtype) {
+
+	out << "Press enter to continue or press \"n\" and then enter to return to the menu.";
+
+	string input;
+	
+	getline(in, input);
+
+	if (input != "n") {
+		type = nextType;
+		subtype = nextSubtype;
+	}
 	
 }
 

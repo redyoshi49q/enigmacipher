@@ -120,91 +120,6 @@ int Level::engine() {
 
 }
 
-#ifdef _WIN32 //this does *not* yet work on linux
-int Level::engine2() {
-
-	//stringstream buffer;
-	//string currentString;
-	int idx = 0, idx2 = 0;
-	char ch;
-	//bool test = true;
-
-	triggerBuffer.assign(getMaxTriggerLength(), '\n');
-	setBuffers();
-
-	bool victory = false;
-	bool easterEgg = false;
-
-	while(victory == false) {
-		ch = _getch();
-
-		switch(static_cast<int>(ch)) {
-			case 224:
-				ch = _getch(); //this discards the extra character in
-					//the buffer
-				break;
-
-			case 13:
-				idx = idx2 = 0;
-				shiftTriggerBuffer('\n');
-				//currentString = buffer.str();
-				//buffer.str("");
-				break;
-
-			case static_cast<int>('\b'):
-				idx++;
-				idx2 = 0;
-				if(idx == 3)
-				{
-					return 2;
-				}
-				break;
-
-			case static_cast<int>(' '):
-				idx = idx2 = 0;
-				shiftTriggerBuffer(' ');
-				break;
-
-			case static_cast<int>('\t'):
-				idx2++;
-				idx = 0;
-				if(idx2 == 3) {
-					if (Options[CLEAR_IN_GAME] == "Enabled") { cls(); }
-					idx2 = 0;
-				}
-				break;
-
-			default:
-				idx = idx2 = 0;
-				cycleChar(ch);
-				//shiftTriggerBuffer(ch);
-				//buffer << ch;
-				//cout << ch;
-				break;
-
-		}
-
-		switch(int x = checkTriggers() ) {
-			case -1:
-				break;
-
-			default:
-				bool newLine = isNotNull(x);
-				activateTrigger(x, victory, easterEgg);
-				if (newLine) { shiftTriggerBuffer('\n'); }
-				break;	out << "\nPress enter to continue.";
-
-	pauseOutput();
-	cls();
-
-		}
-
-	}
-
-	return (easterEgg * 2 + victory);
-
-}
-#elif linux
 int Level::engine2() {
 
 	int idx = 0, idx2 = 0;
@@ -217,12 +132,19 @@ int Level::engine2() {
 	bool easterEgg = false;
 
 	while(victory == false) {
-		ch = mygetch();
+		#ifdef _WIN32
+			ch = _getch();
+		#elif linux
+			ch = mygetch();
+		#endif
 
 		switch(static_cast<int>(ch)) {
 			case 224:
-				ch = mygetch(); //this discards the extra character in
-					//the buffer
+				#ifdef _WIN32
+					ch = _getch(); //this discards the extra character in the buffer
+				#elif linux
+					ch = mygetch();
+				#endif
 				break;
 
 			case 13:
@@ -280,7 +202,7 @@ int Level::engine2() {
 	return (easterEgg * 2 + victory);
 
 }
-
+#ifdef linux
 int Level::mygetch()
 {
         struct termios oldt, newt;

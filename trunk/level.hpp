@@ -18,7 +18,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Enigma Cipher.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 
@@ -36,7 +36,9 @@
 		#include <conio.h>
 		#include <process.h>
 	#elif defined(linux)
-		//I need linix compatibility here.
+		#include <stdio.h>
+        #include <termios.h>
+        #include <unistd.h>
 	#endif
 	#include <sstream>
 
@@ -46,42 +48,45 @@
 		public:
 			Level(); //this allows for uninitialized levels, but
 				//UNINITIALIZED LEVELS SHOULD NOT BE USED!!!
-			
+
 			Level(Layer*, vector<Trigger>); //done
 			Level(vector<Layer*>, vector<Trigger>); //done
-			
+
 			~Level();
-			
+
 			int engine();
-			#ifdef _WIN32 //this does *not* yet work on linux
+			//#ifdef _WIN32 //this does *not* yet work on linux
 				int engine2();
+			//#endif
+			#ifdef linux
+                int mygetch();
 			#endif
-			
+
 			int getBuffer(int i) { return layers[i]->getBuffer(); } //done
 			int size() { return layers.size(); }
-			
+
 			int getMaxTriggerLength(); //done
-			
+
 			int checkTriggers(); //done
-			
+
 			void activateTrigger(int, bool&, bool&); //done
 			bool isNotNull(int x) { return triggers[x].isNotNull(flags); }
 
 			void cycleChar(char);
 			void shiftTriggerBuffer(char);
-			
+
 			void setBuffers();
-			
+
 		private:
-			
+
 			vector<Layer*> layers;
-			
+
 			vector<Trigger> triggers;
-			
+
 			deque<char> triggerBuffer;
-			
+
 			int flags;
-			
+
 	};
 
 #endif //LEVEL_HPP

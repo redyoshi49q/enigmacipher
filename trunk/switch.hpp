@@ -40,7 +40,7 @@
 			void cycleChar(char&);
 			void bufferCycle(char&);
 			
-			int getBuffer();
+			static Layer* getLayer();
 
 		private:
 			

@@ -34,6 +34,7 @@
 	#include "global.hpp"
 	
 	#include <string>
+	#include <vector>
 	using namespace std;
 	
 	extern string LOWER;
@@ -44,11 +45,27 @@
 	class Layer {
 		public:
 			
-			virtual void cycleChar(char& character) = 0;
+			virtual void cycleChar(char&) = 0;
+			
 			virtual void bufferCycle(char&) = 0;
+			virtual bool needsBufferCycle() { return false; };
 			
-			virtual int getBuffer() = 0;
+			virtual bool collectLayers(vector<Layer*>&);
 			
+				/* the returned bool is false if the Layer's pointer is already in the vector,
+				 *   and true otherwise.  Either way, the Layer's pointer will end up in the
+				 *   vector after this call.  The bool isn't used when this function is called by
+				 *   the level.  Instead, some child classes (such as Switch and Stack) use the
+				 *   bool to determine whether they should call collectLayers() of contained Layer
+				 *   pointers or not.  This prevents circular Layer calls, but still allows for
+				 *   all needed Layers to end up in the Layer* vector.
+				 */
+			
+			// virtual static Layer* getLayer() = 0;
+				/*this isn't actually here because functions can't be both virtual and static.
+				 *   however, each Layer class *must* have "static Layer* getLayer();"
+				 *   the rest of the program (namely the advanced level generator) expects this.
+				 */
 	};
 
 #endif //LAYER_HPP

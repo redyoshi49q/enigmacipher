@@ -31,31 +31,29 @@ void initializeOptions() {
 	  //will call the wrong options
 
 	//ENGINE_VERSION
-		//#ifdef _WIN32 //this does *not* yet work on linux
-			choices.push_back("Immediate");
-			descriptions.push_back("Game output is generated on a character-by-character basis.\nIn game user input is not displayed;  only game output is displayed.\nThe backspace key does not delete inputted characters.");
-		//#endif
-
+		choices.push_back("Immediate");
+		descriptions.push_back("Game output is generated on a character-by-character basis.\nIn game user input is not displayed;  only game output is displayed.\nThe backspace key does not delete inputted characters.");
+		
 		choices.push_back("Delayed");
 		descriptions.push_back("Game output is generated when the enter key is pressed.\nIn game text alternates between user input and game output\n  on a line-by-line basis.\nThe backspace key can be used to delete characters on the current line.");
-
+		
 		Options.push_back(Option("Game Engine", "Determines how the game processes input and output.", choices, descriptions, "Delayed") );
-
+		
 		choices.clear();
 		descriptions.clear();
-
+		
 	//CLEAR_IN_GAME
 		choices.push_back("Enabled");
 		descriptions.push_back("Allows the screen to be cleared during a game.\nThe controls to do so will depend on the game engine.");
-
+		
 		choices.push_back("Disabled");
 		descriptions.push_back("Disables the controls that clear the screen.");
-
+		
 		Options.push_back(Option("Screen Clearing", "Determines whether the player can clear the screen\nduring game play.", choices, descriptions, "Enabled") );
-
+		
 		choices.clear();
 		descriptions.clear();
-
+		
 }
 
 void changeOptions() {

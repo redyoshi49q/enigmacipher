@@ -41,7 +41,11 @@
 			
 			void cycleChar(char&);
 			void bufferCycle(char&);
-			int getBuffer() { return b; };
+			bool needsBufferCycle() { return (delay > 0); };
+			
+			//int getBuffer() { return b; };
+			
+			static Layer* getLayer();
 		
 		private:
 
@@ -50,6 +54,7 @@
 		
 			int s, d, v, b;
 			int previous, index;
+			int delay;
 			
 			deque<char> buffer;
 			vector<vector<string> > domains;

@@ -28,6 +28,7 @@
 	#include "layer.hpp"
 	#include "offsets.hpp"
 	#include "switch.hpp"
+	#include "stack.hpp"
 	//#include "disk.hpp" //this should work, but it isn't incorporated yet
 	//#include "flipdisk.hpp" //this should work, but it isn't incorporated yet
 	#include "option.hpp"
@@ -47,10 +48,7 @@
 	int main();
 	int runLevel(Level&, int);
 	void welcome();
-	void menu();
 	void help();
-	void about();
-	void exit();
 	void referenced();
 	void nextLevel(int&, char&, int, char);
 

@@ -34,3 +34,17 @@ string LOWER = "abcdefghijklmnopqrstuvwxyz";
 string UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 string NUMBER = "0123456789";
 string SYMBOL = "~`!@#$%^&*()_-+={[}]|\\:;\"'<,>.?/";
+
+bool Layer::collectLayers(vector<Layer*> &layerList) {
+	
+	for (int i = 0; i < layerList.size(); i++) {
+		if (layerList[i] == this) {
+			return false;
+		}
+	}
+	
+	layerList.push_back(this);
+	
+	return true;
+	
+}

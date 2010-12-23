@@ -31,7 +31,7 @@ Level::Level() {} //a level declared like this should not be used
 
 Level::Level(Layer *newLayer, vector<Trigger> newTriggers) {
 
-	layers.assign(1, newLayer);
+	layer = newLayer;
 
 	triggers = newTriggers;
 
@@ -39,28 +39,35 @@ Level::Level(Layer *newLayer, vector<Trigger> newTriggers) {
 
 }
 
-Level::Level(vector<Layer*> newLayers, vector<Trigger> newTriggers) {
-
-	layers = newLayers;
-
-	triggers = newTriggers;
-
-	flags = 0;
-
+Level::~Level() {
+	
+	/*the level deconstructor destroys the dynamically allocated Layers used in the level*/
+	
+	for (int i = 0; i < triggers.size(); i++) {
+		for (int j = 0; j < triggers[i].getNumOfLayers(); j++) {
+			if (triggers[i].getLayer(j) != NULL) {
+				triggers[i].getLayer(j)->collectLayers(layerList);
+					/*this collects all the layers buried in the triggers*/
+			}
+		}
+	}
+				
+	for (int i = 0; i < layerList.size(); i++) {
+		delete layerList[i];
+	}
+	
 }
-
-Level::~Level() {}
 
 int Level::engine() {
-
-	triggerBuffer.assign(getMaxTriggerLength(), '\n');
-
-	setBuffers();
 
 	char input, lastChar = 'a';
 	bool victory = false;
 	bool easterEgg = false;
-
+	
+	triggerBuffer.assign(getMaxTriggerLength(), '\n');
+	
+	setBuffers();
+	
 	while (victory == false) {
 
 		input = g_in.get();
@@ -85,7 +92,8 @@ int Level::engine() {
 			//that needs to go as an else if clause before cycleChar() is called.
 			//otherwise, things might break
 
-			cycleChar(input);
+			layer->cycleChar(input);
+			shiftTriggerBuffer(input);
 
 		}
 
@@ -103,6 +111,8 @@ int Level::engine() {
 				activateTrigger(x, victory, easterEgg);
 
 				if (newLine) { shiftTriggerBuffer('\n'); }
+				
+				if (victory == false && g_in.peek() == '\n') { char dummy = g_in.get(); }
 
 				break;
 
@@ -125,11 +135,12 @@ int Level::engine2() {
 	int idx = 0, idx2 = 0;
 	char ch;
 
-	triggerBuffer.assign(getMaxTriggerLength(), '\n');
-	setBuffers();
-
 	bool victory = false;
 	bool easterEgg = false;
+
+	triggerBuffer.assign(getMaxTriggerLength(), '\n');
+	
+	setBuffers();
 
 	while(victory == false) {
 		#ifdef _WIN32
@@ -177,7 +188,8 @@ int Level::engine2() {
 
 			default:
 				idx = idx2 = 0;
-				cycleChar(ch);
+				layer->cycleChar(ch);
+				shiftTriggerBuffer(ch);
 				break;
 
 		}
@@ -190,10 +202,7 @@ int Level::engine2() {
 				bool newLine = isNotNull(x);
 				activateTrigger(x, victory, easterEgg);
 				if (newLine) { shiftTriggerBuffer('\n'); }
-				break;	out << "\nPress enter to continue.";
-
-	pauseOutput();
-	cls();
+				break;
 
 		}
 
@@ -202,6 +211,7 @@ int Level::engine2() {
 	return (easterEgg * 2 + victory);
 
 }
+
 #ifdef linux
 int Level::mygetch()
 {
@@ -223,8 +233,7 @@ int Level::getMaxTriggerLength() {
 
 	for (int i = 0; i < triggers.size(); i++) {
 
-		maxTriggerLength = max(maxTriggerLength,
-			triggers[i].getLengthOfTrigger());
+		maxTriggerLength = max(maxTriggerLength, triggers[i].getLengthOfTrigger());
 
 	}
 
@@ -244,28 +253,15 @@ int Level::checkTriggers() {
 
 }
 
-
 void Level::activateTrigger(int happiness, bool& victory, bool& easterEgg) {
 
-	vector<Layer*> temp = triggers[happiness].getLayers(flags);
-	if (temp.size() != 0) {
-		layers = temp;
+	Layer *temp = triggers[happiness].getLayer(flags);
+	if (temp != NULL) {
+		layer = temp;
 		setBuffers();
 	}
 
 	triggers[happiness].activate(flags, victory, easterEgg);
-
-}
-
-
-
-void Level::cycleChar(char character) {
-
-	for (int i = 0; i < layers.size(); i++) {
-		layers[i]->cycleChar(character);
-	}
-
-	shiftTriggerBuffer(character);
 
 }
 
@@ -280,16 +276,25 @@ void Level::shiftTriggerBuffer(char input) {
 }
 
 void Level::setBuffers() {
-
-	char character;
-
-	for (int depth = 0; depth < size(); depth++) {
-		for (int a = 0; a < getBuffer(depth); a++) {
-			character = 'a';
-			for (int b = 0; b < size(); b++) {
-				layers[b]->bufferCycle(character);
-			}
-		}
+	
+	char character = 'a';
+	
+	layer->collectLayers(layerList);
+	
+	while (needsBufferCycle() == true) {
+		layer->bufferCycle(character);
 	}
 
+}
+
+bool Level::needsBufferCycle() {
+	
+	for (int i = 0; i < layerList.size(); i++) {
+		if (layerList[i]->needsBufferCycle() == true) {
+			return true;
+		}
+	}
+	
+	return false;
+	
 }

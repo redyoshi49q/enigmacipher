@@ -22,7 +22,7 @@
 
 #include "global.hpp"
 
-ostream &out = cout, &g_out = cout;
+ostream &out = cout, &g_out = cout, &t_out = cout;
 istream &in = cin, &g_in = cin;
 
 //int completed[6] = {0,0,0,0,0,0};

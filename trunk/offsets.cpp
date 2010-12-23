@@ -26,7 +26,7 @@ Offsets::Offsets(int newS, int newD, int newV, int newB, int c) {
 	s = newS;
 	d = newD;
 	v = newV;
-	b = newB;
+	b = delay = max(newB, 0);
 	
 	index = 0;
 	previous = 0;
@@ -38,29 +38,12 @@ Offsets::Offsets(int newS, int newD, int newV, int newB, int c) {
 }
 
 Offsets::Offsets(int newS, int newD, int newV, int newB,
-	vector<vector<string> > newDomains) {
-	
-	s = newS;
-	d = newD;
-	v = newV;
-	b = newB;
-	
-	index = 0;
-	previous = 0;
-	
-	buffer.assign(b, 'a');
-	
-	domains = newDomains;
-	
-}
-
-Offsets::Offsets(int newS, int newD, int newV, int newB,
 	vector<string> newDomains) {
 	
 	s = newS;
 	d = newD;
 	v = newV;
-	b = newB;
+	b = delay = newB;
 	
 	index = 0;
 	previous = 0;
@@ -72,6 +55,23 @@ Offsets::Offsets(int newS, int newD, int newV, int newB,
 		addition.assign(1, newDomains[i]);
 		domains.push_back(addition);
 	}
+	
+}
+
+Offsets::Offsets(int newS, int newD, int newV, int newB,
+	vector<vector<string> > newDomains) {
+	
+	s = newS;
+	d = newD;
+	v = newV;
+	b = delay = max(newB, 0);
+	
+	index = 0;
+	previous = 0;
+	
+	buffer.assign(b, 'a');
+	
+	domains = newDomains;
 	
 }
 
@@ -305,6 +305,8 @@ void Offsets::bufferCycle(char &character) {
 	
 	deque<char> buffer;
 	
+	if (delay > 0) { delay--; }
+	
 	for (int a = 0; a < domains.size(); a++) {
 		for (int b = 0; b < domains[a].size(); b++) {
 			for (int c = 0; c < domains[a][b].size(); c++) {
@@ -325,3 +327,29 @@ void Offsets::bufferCycle(char &character) {
 	
 }
 
+Layer* Offsets::getLayer() {
+	
+	int s, d, v, b, c;
+	
+	out << "   (If you know what you are doing, pleas input s, d, v,\n"
+		<< "b, and c in that order.)\n\n"
+		<< "Please input a static offset:   ";
+	in >> s;
+	
+	//code that can tell if in is full or not at this point would be helpful
+	
+	out << "Please input a dynamic offset:  ";
+	in >> d;
+	
+	out << "Please input a variable offset: ";
+	in >> v;
+	
+	out << "Please input a buffer size:     ";
+	in >> b;
+	
+	out << "Please input a cycle number:    ";
+	in >> c;
+	
+	return new Offsets(s, d, v, b, c);
+	
+}

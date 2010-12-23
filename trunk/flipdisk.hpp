@@ -20,7 +20,7 @@
  *  along with Enigma Cipher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- #ifndef FLIPDISK_HPP
+#ifndef FLIPDISK_HPP
 #define FLIPDISK_HPP
 	
 	#include "layer.hpp"
@@ -44,7 +44,10 @@
 			void cycleChar(char&);
 			void bufferCycle(char &character) { cycleChar(character); }
 			
-			int getBuffer() { return 0; }
+			//int getBuffer() { return 0; }
+			
+			static Layer* getLayer();
+				//this function is in getlayers.cpp
 			
 			FlipDisk reverse() { return FlipDisk(domains, shifts, (forward?-delay:delay) ); }
 			

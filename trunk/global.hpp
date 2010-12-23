@@ -34,6 +34,7 @@
 	extern istream &g_in;
 	extern ostream &out; 
 	extern ostream &g_out;
+	extern ostream &t_out;
 	
 	void cls();
 	int getInt();

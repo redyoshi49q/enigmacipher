@@ -109,7 +109,7 @@ Trigger::Trigger(string word, string newReply, string flagReply,
 
 Trigger::Trigger(string word, vector<string> replies, vector<bool> newFlagArray,
 	vector<bool> beatsLevelArray, vector<bool> newEasterEggArray,
-	vector<vector<Layer*> > newLayerArray) {
+	vector<Layer*> newLayerArray) {
 	
 	keyWord = word;
 	
@@ -127,7 +127,7 @@ Trigger::Trigger(string word, vector<string> replies, vector<bool> newFlagArray,
 
 Trigger::Trigger(string word, vector<string> replies, vector<bool> newFlagArray,
 	vector<bool> beatsLevelArray, vector<bool> newEasterEggArray,
-	vector<Layer*> newLayerArray) {
+	Layer* newLayer) {
 	
 	keyWord = word;
 	
@@ -139,24 +139,20 @@ Trigger::Trigger(string word, vector<string> replies, vector<bool> newFlagArray,
 	
 	easterEggArray =  newEasterEggArray;
 	
-	for (int i = 0; i < newLayerArray.size(); i++) {
-		vector<Layer*> addition;
-		addition.assign(1, newLayerArray[i]);
-		layerArray.push_back(addition);
-	}
+	layerArray.push_back(newLayer);
 	
 }
 
-Trigger::~Trigger() {} //nothing needs to be done here right now...
+Trigger::~Trigger() {} /* the containing Level takes care of Layer garbage collection. */
 
 void Trigger::activate(int &flag, bool &victory, bool &easterEgg) {
 	
-	out << reply[min(flag, int(reply.size())-1)];
+	t_out << reply[min(flag, int(reply.size())-1)];
 	
 	victory = victory || victoryArray[min(flag,int(victoryArray.size())-1)];
 	easterEgg = easterEgg || easterEggArray[min(flag,int(easterEggArray.size())-1)];
 	
-	if (flag < int(flagTripArray.size()) && flagTripArray[flag]==true) { flag++; }
+	if (flag < int(flagTripArray.size()) && flagTripArray[flag] == true) { flag++; }
 	
 }
 
@@ -181,10 +177,10 @@ int Trigger::getNumOfFlags() { return max(max(max(max(reply.size()-1,
 
 int Trigger::getLengthOfTrigger() {return keyWord.size();}
 
-vector<Layer*> Trigger::getLayers(int flag) {
+Layer* Trigger::getLayer(int flag) {
 	
-	if (flag > int(layerArray.size() )-1) { return vector<Layer*>(); }
+	if (layerArray.size() == 0) { return NULL; }
 	
-	return layerArray[flag];
+	return layerArray[min(flag, int(layerArray.size() )-1)];
 	
 }

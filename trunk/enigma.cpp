@@ -32,6 +32,8 @@
  *   offsets.hpp
  *   switch.cpp
  *   switch.hpp
+ *   stack.cpp
+ *   stack.hpp
  *   global.cpp
  *   global.hpp
  *   homebrew.cpp
@@ -64,6 +66,19 @@
  *   such an email to maintain compliance with this law.
  *
  * Revision History:
+ *
+ * r10:
+ *   added garbage collection, changed some things to allow for circular Layer references
+ *     added Stack and Scramble classes
+ *   author: redyoshi49q (Ethan)
+ *
+ * r8-9:
+ *   minor code changes
+ *   author: eidolonlord (Jacob)
+ *
+ * r7:
+ *   changed interface so that the user would go to the next level by default
+ *   author: redyoshi49q (Ethan)
  *
  * r6:
  *   resubmission to *actually* include Option class
@@ -149,7 +164,7 @@ int main() {
 					break;
 
 				default:
-					out << "Something is seriously broken here...";
+					out << "Something is seriously broken here...\n";
 					//this case should never be called.
 					break;
 
@@ -298,8 +313,8 @@ int main() {
 
 					vector<string> reply;
 					reply.push_back(" cannot be given until \"enigma\" appears!");
-					reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n\nNow that you have the hint given by making \"help\" appear, you should now\nhave a good idea as to what the password is.  If for some reason you don't,\nthe password is \"thesolutiontotheriddle\".  If you make this appear (on a new\nline), you will beat the practice level.\nOnce you do, try level 2a next.\n");
-					reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n\nNow that you have the hint given by making \"help\" appear, you should now\nhave a good idea as to what the password is.  If for some reason you don't,\nthe password is \"thesolutiontotheriddle\".  If you make this appear (on a new\nline), you will beat the practice level.\nOnce you do, try level 2a next.\n");
+					reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n\nNow that you have the hint given by making \"help\" appear, you should now\nhave a good idea as to what the password is.  If for some reason you don't,\nthe password is \"thesolutiontotheriddle\".  If you make this appear (on a new\nline), you will beat the practice level.\n");
+					reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n\nNow that you have the hint given by making \"help\" appear, you should now\nhave a good idea as to what the password is.  If for some reason you don't,\nthe password is \"thesolutiontotheriddle\".  If you make this appear (on a new\nline), you will beat the practice level.\n");
 
 					vector<bool> b1;
 					b1.push_back(false);
@@ -310,7 +325,7 @@ int main() {
 					triggers.push_back(Trigger("\nhelp", reply, b1, b3, b3) );
 
 					reply.assign(2, "");
-					reply.push_back("\nAccess granted.\n\nThis level has been beaten, so please try level 2a next.");
+					reply.push_back("\nAccess granted.\n");
 					b1.assign(2, false);
 					vector<bool> b2;
 					b2.assign(2, false);
@@ -349,7 +364,7 @@ int main() {
 					triggers.push_back(Trigger("\nhelp",
 						" cannot be given until \"enigma\" appears!",
 						"\nWhat is the opposite of \"up\"?\n\nAs you can probably guess, the password is \"down\".  In order to make \"down\"\nappear, you need to type in the characters that come alphabetically before \"d\",\n\"o\", \"w\", and \"n\".  These characters are \"c\", \"n\", \"v\", and \"m\", which means\nthat typing \"cnvm\" will make \"down\" appear and beat the level.") );
-					triggers.push_back(Trigger("\ndown", "", "\nAccess granted.\n\nThis level has been beaten, so please try level 2b next.", bitset<3>(2ul) ));
+					triggers.push_back(Trigger("\ndown", "", "\nAccess granted.\n", bitset<3>(2ul) ));
 
 					level = Level(new Offsets(1), triggers);
 
@@ -384,7 +399,7 @@ int main() {
 					triggers.push_back(Trigger("\nhelp",
 						" cannot be given until \"enigma\" appears!",
 						"\nIf enigma is neither end, then it's obviously the ------.") );
-					triggers.push_back(Trigger("\nmiddle", "", "\nAccess granted.\n\nThis level has been beaten, so please try level 3a next.",
+					triggers.push_back(Trigger("\nmiddle", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
 					level = Level(new Offsets(-1), triggers);
@@ -431,7 +446,7 @@ int main() {
 						" cannot be given until \"enigma\" appears!",
 						"\nHow many toes do you have?\nHow many limbs do you have?\nHow many eyes do you have?\nSubtract, divide, and conquer! (in that order)") );
 					triggers.push_back(Trigger("\n3", "", "\nNice try, but no.\nTry \"three\" instead.") );
-					triggers.push_back(Trigger("\nthree", "", "\nAccess granted.\n\nThis level has been beaten, so please try level 3b next.",
+					triggers.push_back(Trigger("\nthree", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
 
@@ -457,7 +472,7 @@ int main() {
 						" cannot be given until \"enigma\" appears!",
 						"\nAll you have to do is make \":)\" appear.\nBe glad there's no offset for this level...") );
 					triggers.push_back(Trigger("\n:)", "",
-						"\nAccess granted.\n\nThis level has been beaten, so please try level 4a next.",
+						"\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
 					level = Level(new Offsets(0, 0, 0, 5), triggers);
@@ -496,7 +511,7 @@ int main() {
 					triggers.push_back(Trigger("\nhelp",
 						" cannot be given until \"enigma\" appears!",
 						"\nIf it looks like a ---- and quacks like a ----, then it's a ----.") );
-					triggers.push_back(Trigger("\nduck", "", "\nAccess granted.\n\nThis level has been beaten, so please try level 4b next.",
+					triggers.push_back(Trigger("\nduck", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
 					level = Level(new Offsets(-2, 0, 0, 1), triggers);
@@ -527,7 +542,7 @@ int main() {
 					triggers.push_back(Trigger("\nenigma", " is where the grass is never less green.") );
 					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
 						"\nThe grass is always greener on --- ----- ----.") );
-					triggers.push_back(Trigger("\ntheotherside", "\nAccess granted.\n\nThis level has been beaten, so please try level 4c next.", bitset<3>(2ul) ));
+					triggers.push_back(Trigger("\ntheotherside", "\nAccess granted.\n", bitset<3>(2ul) ));
 
 					level = Level(new Offsets(3, 0, 0, 4), triggers);
 
@@ -555,7 +570,7 @@ int main() {
 
 					triggers.push_back(Trigger("\nsea", "", "\nIt's not just \"sea\", it's enigma!") );
 
-					triggers.push_back(Trigger("\nthesea", "", "\nAccess granted.\n\nThis level has been beaten, so please try level 5 next.",
+					triggers.push_back(Trigger("\nthesea", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
 					level = Level(new Offsets(-5, 0, 0, 4), triggers);
@@ -700,12 +715,11 @@ int main() {
 					triggers.push_back(Trigger("\nCD", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-					layers.push_back(new Offsets(6, 0, 0, 4) );
-					layers.push_back(new Offsets(6, 0, 0, 0, 6) );
-
 					help();
 
-					level = Level(layers, triggers);
+					level = Level(new Stack(
+						new Offsets(6, 0, 0, 4), new Offsets(6, 0, 0, 0, 6) ),
+						triggers);
 
 					if (runLevel(level, 12) % 2 == 1) { //is either 1 or 3
 						nextLevel(type, subtype, 10, '?');
@@ -766,9 +780,9 @@ int main() {
 					break;
 
 				case 12: {
-
+					
 					cls();
-
+					
 					triggers.push_back(Trigger("\nenigma",
 						" was what hurts the most.") );
 					triggers.push_back(Trigger("\nhelp",
@@ -778,22 +792,24 @@ int main() {
 						"\nYou're close enough...\nAccess granted.\n", bitset<3>(2ul) ));
 					triggers.push_back(Trigger("\nbeingsoclose", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
-
+					
 					layers.push_back(new Offsets(6, -1, 0, 4) );
 					layers.push_back(new Offsets(6, 1, 0, 0, 6) );
-
+					
 					help();
-
-					level = Level(layers, triggers);
-
+					
+					level = Level(new Stack(
+						new Offsets(6, -1, 0, 4), new Offsets(6, 1, 0, 0, 6) ),
+						triggers);
+					
 					if (runLevel(level, 15) % 2 == 1) { //is either 1 or 3
 						nextLevel(type, subtype, 13, '?');
 					}
-
+					
 					}
-
+					
 					break;
-
+					
 				case 13: {
 
 					cls();
@@ -819,12 +835,12 @@ int main() {
 					break;
 
 				case 14: {
-
+					
 					cls();
-
+					
 					vector<string> replies;
 					vector<bool> tripsFlag, beatsLevel, easterEgg;
-
+					
 					for (int i = 0; i < 3; i++) {
 						replies.push_back(" is broken.  Please try again later.");
 					}
@@ -832,19 +848,19 @@ int main() {
 						replies.push_back(" is still broken.  Are you sure you fixed it?");
 					}
 					replies.push_back(" is where your voice is heard without words.\n");
-
+					
 					tripsFlag.assign(12, false);
 					tripsFlag[0] = true;
 					tripsFlag[3] = true;
 					tripsFlag[10] = true;
-
+					
 					beatsLevel.assign(1, false);
 					easterEgg.assign(1, false);
-
+					
 					//layers should be given some stuff here...
-
+					
 					triggers.push_back(Trigger("\nenigma", replies, tripsFlag, beatsLevel, easterEgg, layers) );
-
+					
 					replies.assign(1, " cannot be given until \"enigma\" appears!");
 					for (int i = 1; i < 3; i++) {
 						replies.push_back("\nWhat are you looking for, anyway?");
@@ -857,24 +873,24 @@ int main() {
 					replies.push_back("\nYou fixed the password utility...  but did you ever fix enigma?");
 					replies.push_back("\nenigma really has been fixed this time...  seriously!");
 					replies.push_back("\nClawing up my eyes,\nI'm feeling your arms around me\nOn enigma.\nIt's time to go,\nI'm hearing your voice without words\nOn enigma.\n(If you don't get it, use a search engine.)");
-
+					
 					tripsFlag.assign(7, false);
 					tripsFlag[1] = true;
 					tripsFlag[5] = true;
-
+					
 					//layers should be given some stuff here...
-
+					
 					triggers.push_back(Trigger("\nhelp", replies, tripsFlag, beatsLevel, easterEgg, layers) );
-
+					
 					replies.assign(2, "");
 					replies.push_back("\nYes, but what *is* the solution to the riddle?");
 					replies.push_back("");
 					tripsFlag.assign(1, false);
-
+					
 					//layers should be given some stuff here...
-
+					
 					triggers.push_back(Trigger("\nthesolutiontotheriddle", replies, tripsFlag, beatsLevel, easterEgg, layers) );
-
+					
 					replies.assign(2, "");
 					for (int i = 2; i < 4; i++) {
 						replies.push_back("\nenigma has been fixed.");
@@ -887,57 +903,52 @@ int main() {
 					replies.push_back("\nAfter a less-than-gentle love tap, the password utility\nhas been returned to full functionality.");
 					replies.push_back("\nenigma has been fixed.\nThank you for using the password utility.\nHave a nice day!");
 					replies.push_back("");
-
+					
 					tripsFlag.assign(11, false);
 					tripsFlag[2] = true;
 					tripsFlag[4] = true;
 					for (int i = 6; i < 10; i++) {
 						tripsFlag[i] = true;
 					}
-
+					
 					//layers should be given some stuff here...
-
+					
 					triggers.push_back(Trigger("\npassword", replies, tripsFlag, beatsLevel, easterEgg, layers) );
-
+					
 					replies.assign(12, "");
 					replies[11] = "\nYou're close enough...\nAccess granted.\n";
-
+					
 					tripsFlag.assign(1, false);
-
+					
 					beatsLevel.assign(12, false);
 					beatsLevel[11] = true;
-
+					
 					layers = vector<Layer*>();
-
+					
 					triggers.push_back(Trigger("\nontheotherside", replies, tripsFlag, beatsLevel, easterEgg, layers) );
-
+					
 					replies[11] = "\nAccess granted.\n";
-
+					
 					triggers.push_back(Trigger("\ntheotherside", replies, tripsFlag, beatsLevel, easterEgg, layers) );
-
-					layers.assign(1, new Offsets(12, 3, 6, 5, 7) );
-					layers.push_back(new Offsets(51, -2, 3, 4, 5) );
-
+					
 					out << "You *really* should know what to do by now...\n\n";
-
-					level = Level(layers, triggers);
-
+					
+					level = Level(new Stack(
+						new Offsets(12, 3, 6, 5, 7), new Offsets(51, -2, 3, 4, 5) ),
+						triggers);
+					
 					if (runLevel(level, 17) % 2 == 1) { //is either 1 or 3
 						nextLevel(type, subtype, 15, '?');
 					}
-
+					
 					}
-
+					
 					break;
-
+					
 				case 15: {
-
+					
 					cls();
-
-					layers.push_back(new Offsets(-32, 21, 15, 12, 5) );
-					layers.push_back(new Offsets(12, -2, 15, 5, 17) );
-					layers.push_back(new Offsets(2, 30, -30, 8, 6) );
-
+					
 					triggers.push_back(Trigger("\nenigma",
 						" speaks its only word nevermore.") );
 					triggers.push_back(Trigger("\nhelp",
@@ -945,60 +956,57 @@ int main() {
 						"\nWhile I nodded, nearly napping, suddenly there came a tapping,\nAs of some one gently rapping, rapping at my chamber door.\n\"'Tis some visitor,\" I muttered, \"tapping at my chamber door.\nEnigma's this, and nothing more.\"") );
 					triggers.push_back(Trigger("\nraven", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
-
+					
 					out << "You *really* should know what to do by now...\n\n";
-
-					level = Level(layers, triggers);
-
+					
+					level = Level(new Stack(
+						new Offsets(-32, 21, 15, 12, 5), new Offsets(12, -2, 15, 5, 17),
+						new Offsets(2, 30, -30, 8, 6) ),
+						triggers);
+					
 					int dummy = runLevel(level, 18);
-
+					
 					}
-
+					
 					break;
-
+					
 				default:
-
+					
 					out << "Please enter a valid input (i.e., \"1\", \"2b\", \"h\", etc.)\n"
 						<< "Press enter to continue:";
-
+					
 					pauseOutput();
-
+					
 					break;
-
+					
 			}
-
+		
 		}
-
+	
 	}
-
+	
 }
 
 int runLevel(Level &level, int index) {
-
+	
 	int returned;
-
-	//#ifdef _WIN32
-		returned = ( (Options[ENGINE_VERSION] == "Delayed")?level.engine():level.engine2() );
-		  //this only works on Windows right now...
-	//#else
-	//	returned = level.engine();
-	//#endif
-
-
+	
+	returned = ( (Options[ENGINE_VERSION] == "Delayed")?level.engine():level.engine2() );
+	
 	if (returned % 2 == 1) { //returned == 1 || returned == 3
 		beaten[index] = true;
 	}
-
+	
 	if (returned == 3) {
 		out << "\nYou got the easter egg!";
 	}
-
+	
 	return returned;
-
+	
 }
 
 void welcome() {
-
+	
 	out << "Enigma Cipher  Copyright (C) 2009  Ethan Warth (a.k.a. redyoshi49q)\n\n"
 		 << "Enigma Cipher is free software: you can redistribute it and/or modify\n"
 		 << "it under the terms of the GNU General Public License as published by\n"
@@ -1014,7 +1022,7 @@ void welcome() {
 
 	pauseOutput();
 	cls();
-
+	
 	out << "Enigma Cipher  Copyright (C) 2009  Ethan Warth (a.k.a. redyoshi49q)\n\n"
 		 << "It is believed that references to copyrighted materials in the riddles\n"
 		 << "incorporated in this program are a small proportion of their respective\n"
@@ -1025,15 +1033,10 @@ void welcome() {
 		 << "your material violates copyright, please email me at <redyoshi49q AT gmail\n"
 		 << "DOT com> so that the material in Enigma Cipher can be made compliant with\n"
 		 << "your copyright(s).\n\nPress enter to continue.";
-
+	
 	pauseOutput();
 	cls();
-
-}
-
-void menu() {
-
-
+	
 }
 
 void help() {
@@ -1058,18 +1061,6 @@ void help() {
 	}
 			//this is merely so that alpha/beta testers will have some idea
 				//as to what they're supposed to do...
-
-}
-
-void about() {
-
-
-
-}
-
-void exit() {
-
-	//nuke dynamically set arrays, display ending message
 
 }
 

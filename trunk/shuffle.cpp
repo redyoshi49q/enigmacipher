@@ -1,6 +1,6 @@
-/* homebrew.cpp
- * Acts as an interface for homebrew coders to make their own levels.
- *
+/* shuffle.cpp
+ * Rearranges the order of input according to set parameters.
+ * 
  *  Copyright (C) 2009  Ethan Warth (a.k.a. redyoshi49q)
  *
  *  This file is part of Enigma Cipher
@@ -19,14 +19,39 @@
  *  along with Enigma Cipher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "homebrew.hpp"
+#include "shuffle.hpp"
 
-void homebrew_main() {
+Shuffle::Shuffle(vector<int> newOrder) {
 	
-	out << "No homebrew levels have been written.\n"
-		 << "Press enter to continue:";
+	order = newOrder;
+	buffer.assign('a', order.size() );
 	
-	pauseOutput();
-	cls();
+	delay = 0;
+	
+	for (int i = 0; i < order.size(); i++) {
+		delay = max(delay, order[i] - i);
+	}
+	
+}
+
+void Shuffle::cycleChar(char &character) {
+	
+	buffer[phase] = character;
+	character = buffer[order[phase]];
+	
+	phase++;
+	if (phase = order.size() ) { phase = 0; }
+	
+}
+
+void Shuffle::bufferCycle(char &character) {
+	
+	if (delay > 0) { delay--; }
+	
+	if (phase == 0) { phase = order.size(); }
+	phase--;
+	
+	buffer[order[phase]] = character;
+	character = buffer[phase];
 	
 }

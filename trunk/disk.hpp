@@ -39,7 +39,10 @@
 			void cycleChar(char&);
 			void bufferCycle(char& character) { cycleChar(character); }
 			
-			int getBuffer() { return 0; }
+			//int getBuffer() { return 0; }
+			
+			static Layer* getLayers();
+				//this function is in getlayers.cpp
 			
 			Disk flip() { return Disk(end, begin, (forward?-delay:delay) ); }
 			Disk reverse() { return Disk(begin, end, (forward?-delay:delay) ); }

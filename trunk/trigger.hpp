@@ -60,11 +60,11 @@
 			
 			Trigger(string, vector<string>,
 			   vector<bool>, vector<bool>, vector<bool>,
-				vector<vector<Layer*> > = vector<vector<Layer*> >() );
+				vector<Layer*> = vector<Layer*>() );
 
 			Trigger(string, vector<string>,
 			   vector<bool>, vector<bool>, vector<bool>,
-				vector<Layer*>);
+				Layer*);
 			
 			~Trigger();
 			
@@ -78,7 +78,9 @@
 			
 			int getLengthOfTrigger(); //done
 			
-			vector<Layer*> getLayers(int);
+			Layer* getLayer(int);
+			
+			int Trigger::getNumOfLayers() { return layerArray.size(); }
 			
 		private:
 			
@@ -87,7 +89,7 @@
 			vector<bool> flagTripArray;
 			vector<bool> easterEggArray;
 			vector<bool> victoryArray;
-			vector<vector<Layer*> > layerArray;
+			vector<Layer*> layerArray;
 			
 	};
 	

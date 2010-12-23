@@ -40,6 +40,7 @@
         #include <termios.h>
         #include <unistd.h>
 	#endif
+	
 	#include <sstream>
 
 	using namespace std;
@@ -50,20 +51,17 @@
 				//UNINITIALIZED LEVELS SHOULD NOT BE USED!!!
 
 			Level(Layer*, vector<Trigger>); //done
-			Level(vector<Layer*>, vector<Trigger>); //done
 
 			~Level();
 
 			int engine();
-			//#ifdef _WIN32 //this does *not* yet work on linux
-				int engine2();
-			//#endif
+			int engine2();
+			
+		private:
+			
 			#ifdef linux
                 int mygetch();
 			#endif
-
-			int getBuffer(int i) { return layers[i]->getBuffer(); } //done
-			int size() { return layers.size(); }
 
 			int getMaxTriggerLength(); //done
 
@@ -77,9 +75,10 @@
 
 			void setBuffers();
 
-		private:
-
-			vector<Layer*> layers;
+			bool needsBufferCycle();
+			
+			Layer *layer;
+			vector<Layer*> layerList;
 
 			vector<Trigger> triggers;
 

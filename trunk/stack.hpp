@@ -1,5 +1,6 @@
-/* homebrew.cpp
- * Acts as an interface for homebrew coders to make their own levels.
+/* stack.hpp
+ * A type of game difficulty that logically binds several other layers of
+ *   difficulty (this is meant to be used with switches)
  *
  *  Copyright (C) 2009  Ethan Warth (a.k.a. redyoshi49q)
  *
@@ -19,14 +20,33 @@
  *  along with Enigma Cipher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "homebrew.hpp"
+#ifndef STACK_HPP
+#define STACK_HPP
 
-void homebrew_main() {
+	#include "layer.hpp"
+	#include "global.hpp"
+
+	#include <vector>
+	using namespace std;
+
+	class Stack : public Layer {
+		public:
+			
+			Stack(Layer*, Layer*);
+			Stack(Layer*, Layer*, Layer*);
+			Stack(Layer*, Layer*, Layer*, Layer*);
+			Stack(Layer*, Layer*, Layer*, Layer*, Layer*);
+			Stack(vector<Layer*>);
+			
+			void cycleChar(char&);
+			void bufferCycle(char&);
+			
+			static Layer* getLayer();
+			
+		private:
+			
+			vector<Layer*> layers;
+			
+	};
 	
-	out << "No homebrew levels have been written.\n"
-		 << "Press enter to continue:";
-	
-	pauseOutput();
-	cls();
-	
-}
+#endif //STACK_HPP

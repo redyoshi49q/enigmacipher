@@ -21,45 +21,19 @@
 
 #include "switch.hpp"
 
-Switch::Switch(Layer* newA, Layer* newB) {
+Switch::Switch(int newSize, ...) {
 	
-	layers.push_back(newA);
-	layers.push_back(newB);
+	layers.clear();
 	
-	index = 0;
-	
-}
-
-Switch::Switch(Layer* newA, Layer* newB, Layer* newC) {
-	
-	layers.push_back(newA);
-	layers.push_back(newB);
-	layers.push_back(newC);
+	va_list newLayers;
+	va_start(newLayers, newSize);
+	for (int i = 0; i < newSize; i++) {
+		layers.push_back(va_arg(newLayers, Layer*));
+	}
+	va_end(newLayers);
 	
 	index = 0;
-	
-}
-
-Switch::Switch(Layer* newA, Layer* newB, Layer* newC, Layer* newD) {
-	
-	layers.push_back(newA);
-	layers.push_back(newB);
-	layers.push_back(newC);
-	layers.push_back(newD);
-	
-	index = 0;
-	
-}
-
-Switch::Switch(Layer* newA, Layer* newB, Layer* newC, Layer* newD, Layer* newE) {
-	
-	layers.push_back(newA);
-	layers.push_back(newB);
-	layers.push_back(newC);
-	layers.push_back(newD);
-	layers.push_back(newE);
-	
-	index = 0;
+	checking = false;
 	
 }
 
@@ -67,6 +41,27 @@ Switch::Switch(vector<Layer*> newLayers) {
 	
 	layers = newLayers;
 	index = 0;
+	checking = false;
+	
+}
+
+Layer& Switch::operator [](int index) {
+	
+	if (index < 0) { index = 0; }
+	
+	if (index >= layers.size() ) { index = layers.size() - 1; }
+	
+	return *layers[index];
+	
+}
+
+Layer*& Switch::operator ()(int index) {
+	
+	if (index < 0) { index = 0; }
+	
+	while (layers.size() - 1 > index) { layers.push_back(NULL); }
+	
+	return layers[index];
 	
 }
 
@@ -76,6 +71,30 @@ void Switch::bufferCycle(char &character) {
 	
 	index++;
 	if (index == layers.size() ) index = 0;
+	
+}
+
+bool Switch::needsBufferCycle() {
+	
+	if (checking == true) {
+		return false;
+		/* this prevents the function from going into infinite loops, and
+		 *   the other branches of this will be checked in the function
+		 *   call that set checking to true
+		 */
+	}
+	
+	checking = true;
+	
+	for (int i = 0; i < layers.size(); i++) {
+		if (layers[i]->needsBufferCycle() == true) {
+			checking = false;
+			return true;
+		}
+	}
+	
+	checking = false;
+	return false;
 	
 }
 

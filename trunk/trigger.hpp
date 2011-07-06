@@ -66,6 +66,14 @@
 			   vector<bool>, vector<bool>, vector<bool>,
 				Layer*);
 			
+			// Trigger(string, vector<string>,
+			//	vector<int>, vector<bool>, vector<bool>,
+			//	vector<Layer*> = vector<Layer*>() );
+			
+			// Trigger(string, vector<string>,
+			//	vector<int>, vector<bool>, vector<bool>,
+			//	Layer*);
+			
 			~Trigger();
 			
 			void activate(int&, bool&, bool&); //done

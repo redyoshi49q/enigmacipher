@@ -26,19 +26,21 @@
 	#include "global.hpp"
 	
 	#include <vector>
+	#include <cstdarg>
 	using namespace std;
 	
 	class Switch : public Layer {
 		public:
 			
-			Switch(Layer*, Layer*);
-			Switch(Layer*, Layer*, Layer*);
-			Switch(Layer*, Layer*, Layer*, Layer*);
-			Switch(Layer*, Layer*, Layer*, Layer*, Layer*);
+			Switch(int, ...); //first int gives number of Layer* passed in to form vector
 			Switch(vector<Layer*>);
-		
+			
+			Layer& operator [](int);
+			Layer*& operator ()(int);
+			
 			void cycleChar(char&);
 			void bufferCycle(char&);
+			bool needsBufferCycle();
 			
 			static Layer* getLayer();
 
@@ -47,6 +49,7 @@
 			int index;
 			
 			vector<Layer*> layers;
+			bool checking;
 			
 	};
 	

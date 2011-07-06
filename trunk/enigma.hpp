@@ -29,8 +29,9 @@
 	#include "offsets.hpp"
 	#include "switch.hpp"
 	#include "stack.hpp"
-	//#include "disk.hpp" //this should work, but it isn't incorporated yet
-	//#include "flipdisk.hpp" //this should work, but it isn't incorporated yet
+	#include "shuffle.hpp"
+	#include "disk.hpp" //this should work, but it isn't incorporated yet
+	#include "flipdisk.hpp" //this should work, but it isn't incorporated yet
 	#include "option.hpp"
 	#include "global.hpp"
 	#include "homebrew.hpp"
@@ -43,7 +44,11 @@
 	using namespace std;
 	
 	extern vector<bool> beaten;
-	extern int MAX_MENU_INDEX; //do I need to make this an extern?
+	extern int MAX_MENU_INDEX; // should I make this an extern?  I don't think so, but oh well...
+	
+	enum sublevel {ONE = 0, TWO_A, TWO_B, THREE_A, THREE_B, FOUR_A, FOUR_B, FOUR_C, FIVE_A, FIVE_B, FIVE_C, SIX_A, SIX_B, SIX_C,
+		SEVEN_A, SEVEN_B, SEVEN_C, EIGHT_A, EIGHT_B, EIGHT_C, NINE_A, NINE_B, NINE_C, TEN_A, TEN_B, TEN_C, TEN_D, TEN_E,
+		ELEVEN_A, ELEVEN_B, ELEVEN_C, TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SIMPLE, SUBLEVELS};
 	
 	int main();
 	int runLevel(Level&, int);

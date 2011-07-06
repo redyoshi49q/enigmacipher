@@ -26,12 +26,15 @@
 	#include "global.hpp"
 	
 	#include <vector>
+	#include <cstdarg>
+	#include <cstdlib>
 	using namespace std;
 	
 	class Shuffle : public Layer {
 		public:
 			
 			Shuffle(vector<int>);
+			Shuffle(int, ...); //first int gives number of other ints passed in to form vector
 			
 			void cycleChar(char&);
 			void bufferCycle(char&);

@@ -23,10 +23,35 @@
 
 Shuffle::Shuffle(vector<int> newOrder) {
 	
+	srand(clock() + rand());
+	
 	order = newOrder;
-	buffer.assign('a', order.size() );
+	buffer.assign(order.size(), char('a' + (rand() % 26) ));
 	
 	delay = 0;
+	phase = 0;
+	
+	for (int i = 0; i < order.size(); i++) {
+		delay = max(delay, order[i] - i);
+	}
+	
+}
+
+Shuffle::Shuffle(int newSize, ...) {
+	
+	order.clear();
+	
+	va_list newOrder;
+	va_start(newOrder, newSize);
+	for (int i = 0; i < newSize; i++) {
+		order.push_back(va_arg(newOrder, int));
+	}
+	va_end(newOrder);
+	
+	buffer.assign(order.size(), 'a');
+	
+	delay = 0;
+	phase = 0;
 	
 	for (int i = 0; i < order.size(); i++) {
 		delay = max(delay, order[i] - i);
@@ -40,18 +65,13 @@ void Shuffle::cycleChar(char &character) {
 	character = buffer[order[phase]];
 	
 	phase++;
-	if (phase = order.size() ) { phase = 0; }
+	if (phase == order.size() ) { phase = 0; }
 	
 }
 
 void Shuffle::bufferCycle(char &character) {
 	
 	if (delay > 0) { delay--; }
-	
-	if (phase == 0) { phase = order.size(); }
-	phase--;
-	
-	buffer[order[phase]] = character;
-	character = buffer[phase];
+	cycleChar(character);
 	
 }

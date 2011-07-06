@@ -61,10 +61,34 @@
 				 *   all needed Layers to end up in the Layer* vector.
 				 */
 			
-			// virtual static Layer* getLayer() = 0;
+			virtual Layer& operator [](int) {
+				cerr << "Layer[] called; BAD!!!\n";
+				return *this;
+			}
+				/* this should *never* be used as written; rather, this exists for the convenience
+				 *   of classes such as Stack and Switch (which will override this function with
+				 *   their own implementation).  Putting this in the Layer class allows the main
+				 *   program to call this function on Stack and Switch objects from Layer pointers.
+				 */
+			
+			virtual Layer*& operator ()(int) {
+				cerr << "Layer() called; BAD!!!\n";
+				Layer ** temp = new Layer*();
+				*temp = this;
+				return *temp;
+			}
+			
+				/* again, this should *never* be used as written.  This should instead be overridden
+				 *   by child classes such as Stack and Switch.  Again, putting this in the Layer
+				 *   class allows the main program to call this function on Stack and Switch objects
+				 *   from Layer pointers for convenience.
+				 */
+			
+			// virtual static Layer* getLayer(Layer*?) = 0;
 				/*this isn't actually here because functions can't be both virtual and static.
-				 *   however, each Layer class *must* have "static Layer* getLayer();"
+				 *   however, each Layer class *must* have "static Layer* getLayer(Layer*)"
 				 *   the rest of the program (namely the advanced level generator) expects this.
+				 *   ...or at least it *will*, once an advanced level generator is written...
 				 */
 	};
 

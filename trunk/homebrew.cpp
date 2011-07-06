@@ -24,7 +24,7 @@
 void homebrew_main() {
 	
 	out << "No homebrew levels have been written.\n"
-		 << "Press enter to continue:";
+		<< "Press enter to continue:";
 	
 	pauseOutput();
 	cls();

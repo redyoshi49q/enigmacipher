@@ -22,43 +22,45 @@
 
 #include "stack.hpp"
 
-Stack::Stack(Layer* newA, Layer* newB) {
+Stack::Stack(int newSize, ...) {
 	
-	layers.push_back(newA);
-	layers.push_back(newB);
+	layers.clear();
 	
-}
-
-Stack::Stack(Layer* newA, Layer* newB, Layer* newC) {
+	va_list newLayers;
+	va_start(newLayers, newSize);
+	for (int i = 0; i < newSize; i++) {
+		layers.push_back(va_arg(newLayers, Layer*));
+	}
+	va_end(newLayers);
 	
-	layers.push_back(newA);
-	layers.push_back(newB);
-	layers.push_back(newC);
-	
-}
-
-Stack::Stack(Layer* newA, Layer* newB, Layer* newC, Layer* newD) {
-	
-	layers.push_back(newA);
-	layers.push_back(newB);
-	layers.push_back(newC);
-	layers.push_back(newD);
-	
-}
-
-Stack::Stack(Layer* newA, Layer* newB, Layer* newC, Layer* newD, Layer* newE) {
-	
-	layers.push_back(newA);
-	layers.push_back(newB);
-	layers.push_back(newC);
-	layers.push_back(newD);
-	layers.push_back(newE);
+	checking = false;
 	
 }
 
 Stack::Stack(vector<Layer*> newLayers) {
 	
 	layers = newLayers;
+	checking = false;
+	
+}
+
+Layer& Stack::operator [](int index) {
+	
+	if (index < 0) { index = 0; }
+	
+	if (index >= layers.size() ) { index = layers.size() - 1; }
+	
+	return *layers[index];
+	
+}
+
+Layer*& Stack::operator ()(int index) {
+	
+	if (index < 0) { index = 0; }
+	
+	while (layers.size() - 1 > index) { layers.push_back(NULL); }
+	
+	return layers[index];
 	
 }
 
@@ -78,4 +80,27 @@ void Stack::bufferCycle(char& character) {
 	
 }
 
+bool Stack::needsBufferCycle() {
+	
+	if (checking == true) {
+		return false;
+		/* this prevents the function from going into infinite loops, and
+		 *   the other branches of this will be checked in the function
+		 *   call that set checking to true
+		 */
+	}
+	
+	checking = true;
+	
+	for (int i = 0; i < layers.size(); i++) {
+		if (layers[i]->needsBufferCycle() == true) {
+			checking = false;
+			return true;
+		}
+	}
+	
+	checking = false;
+	return false;
+	
+}
 

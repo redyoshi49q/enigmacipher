@@ -27,25 +27,28 @@
 	#include "global.hpp"
 
 	#include <vector>
+	#include <cstdarg>
 	using namespace std;
 
 	class Stack : public Layer {
 		public:
 			
-			Stack(Layer*, Layer*);
-			Stack(Layer*, Layer*, Layer*);
-			Stack(Layer*, Layer*, Layer*, Layer*);
-			Stack(Layer*, Layer*, Layer*, Layer*, Layer*);
+			Stack(int, ...); //first int gives number of Layer* passed in to form vector
 			Stack(vector<Layer*>);
+			
+			Layer& operator [](int);
+			Layer*& operator ()(int);
 			
 			void cycleChar(char&);
 			void bufferCycle(char&);
+			bool needsBufferCycle();
 			
-			static Layer* getLayer();
+			// static Layer* getLayer();
 			
 		private:
 			
 			vector<Layer*> layers;
+			bool checking;
 			
 	};
 	

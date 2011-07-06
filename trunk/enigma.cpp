@@ -38,6 +38,8 @@
  *   global.hpp
  *   homebrew.cpp
  *   homebrew.hpp
+ *   option.cpp
+ *   option.hpp
  *
  * All other files that are a part of the project are not yet incorporated.
  *   They are in a usable (but untested) state, and no level has yet been
@@ -106,28 +108,33 @@
 #include "enigma.hpp"
 
 vector<bool> beaten;
-int MAX_MENU_INDEX = 1; //this number will need to get changed when more level types are added.
+int MAX_MENU_INDEX = 1; // this number will need to get changed when more level types are added.
+int MAX_TEMP_LAYERS = 3; // increase this if more complicated levels are added later
 
 int main() {
-
+	
 	initializeOptions();
-
+	
 	vector<Trigger> triggers;
 	vector<Layer*> layers;
-
-	beaten.assign(20, false); //this needs to be fixed.
-
+	vector<string> reply, replies;
+	vector<bool> b1, b2, b3, tripsFlag, beatsLevel, easterEgg;
+	
+	Layer* tempLayers[MAX_TEMP_LAYERS];
+	
+	beaten.assign(int(SUBLEVELS), false);
+	
 	cls();
 	welcome();
-
+	
 	string input;
 	Level level;
 	int type = 0, oldType = 0;
 	char subtype = '?', oldSubtype = '?';
 	int index = 0;
-
+	
 	while (true) { //an input of 'h' returns from the main function
-
+	
 		cls();
 
 		triggers.clear();
@@ -146,21 +153,25 @@ int main() {
 						<< "  2a-b: Static Offset\n"
 						<< "  3a-b: Buffer\n"
 						<< "  4a-c: Static Offset with Buffer\n"
-						<< "  5: Dynamic Offset\n"
-						<< "  6: Variable Offset\n"
-						<< "  7: Easy Switch Level\n"
-						<< "  8: Intermediate Level\n"
-						<< "  9: Easy Stacked Level\n"
-						<< " 10: Hard Switch Level\n";
+						<< "  5a-c: Dynamic Offset\n"
+						<< "  6a-c: Simple Shuffle\n"
+						<< "  7a-c: Variable Offset\n"
+						<< "  8a-c: Easy Switch Level\n"
+						<< "  9a-c: Easy Stack Level\n"
+						<< " 10a-e: Advanced Offsets\n";
 					break;
 
 				case 1:
-					out << " 11: Advanced Level (reserved for the persistent)\n"
-						<< " 12: Hard Stacked Level (reserved for the highly persistent)\n"
-						<< " 13: Expert Level (reserved for the insane)\n"
-						<< " 14: Evil Level (reserved for the very insane)\n"
-						<< " 15: Furious Level (reserved for the particularly insane)\n"
-						<< "\n\n\n\n\n"; //this prevents the letter based menu from moving
+					out << " 11a-c: Advanced Stack Level (reserved for the persistent)\n"
+						<< " 12   : Advanced Switch Level (reserved for the highly persistent)\n";
+					#ifdef FALSE // I'm lazy.
+					out	<< " 13   : Expert Level (reserved for the insane)\n"
+						<< " 14   : Evil Level (reserved for the very insane)\n"
+						<< " 15   : Furious Level (reserved for the particularly insane)\n";
+					#else // FALSE; Again, I'm lazy.
+					out << "\n\n\n"; // this prevents the letter based menu from moving
+					#endif
+					out	<< "\n\n\n\n\n"; //this prevents the letter based menu from moving
 					break;
 
 				default:
@@ -245,7 +256,7 @@ int main() {
 
 				level = Level(new Offsets(s, d, v, b, c), triggers);
 
-				runLevel(level, 19);
+				runLevel(level, SIMPLE);
 
 				} break;
 
@@ -297,56 +308,55 @@ int main() {
 			}
 
 			switch (type) {
-
-				case 1: {
-
+				case 1:
+					
 					cls();
-
+					
 					out << "Hello, and welcome to Enigma!\n"
 						<< "There are two primary challenges to this game, namely:\n"
 						<< " * to figure out how to make the word \"enigma\" appear in the output, and\n"
 						<< " * to figure out the password hinted by the clue \"enigma\" produces.\n"
 						<< "Since this is a practice level, the output is the same as your input.\n"
 						<< "Therefore, please type \"enigma\" (on a new line) and press enter.\n\n";
-
+					
 					triggers.push_back(Trigger("\nenigma", " is what you desire.\n\nNow that \"enigma\" has appeared, you can beat this level by making the\npassword appear.  In some levels, this hint is helpful enough to figure\nout the password.  In other levels (such as this one), this hint is not\nenough.  For an additional hint, you need to make \"help\" appear in the\noutput.  Since this is a practice level, you can make this happen by typing\n\"help\" (on a new line), so please do so now.\n") );
-
-					vector<string> reply;
+					
 					reply.push_back(" cannot be given until \"enigma\" appears!");
 					reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n\nNow that you have the hint given by making \"help\" appear, you should now\nhave a good idea as to what the password is.  If for some reason you don't,\nthe password is \"thesolutiontotheriddle\".  If you make this appear (on a new\nline), you will beat the practice level.\n");
 					reply.push_back("\nJust type \"thesolutiontotheriddle\", already!\n\nNow that you have the hint given by making \"help\" appear, you should now\nhave a good idea as to what the password is.  If for some reason you don't,\nthe password is \"thesolutiontotheriddle\".  If you make this appear (on a new\nline), you will beat the practice level.\n");
-
-					vector<bool> b1;
+					
+					b1.clear();
 					b1.push_back(false);
 					b1.push_back(true);
-					vector<bool> b3;
+					
+					b3.clear();
 					b3.assign(3, false);
-
+					
 					triggers.push_back(Trigger("\nhelp", reply, b1, b3, b3) );
-
+					
 					reply.assign(2, "");
 					reply.push_back("\nAccess granted.\n");
 					b1.assign(2, false);
-					vector<bool> b2;
+					b2.clear();
 					b2.assign(2, false);
 					b2.push_back(true);
-
+					
 					triggers.push_back(Trigger("\nthesolutiontotheriddle", reply, b1, b2,
 						b3) );
-
+					
 					triggers.push_back(Trigger("\neasteregg", "", "\n(*insert fanfare here*)\n",
 						bitset<3>(1ul) ));
-
+					
+					reply.clear();
+					
 					level = Level(new Offsets(), triggers);
-
-					if (runLevel(level, 0) % 2 == 1) { //is either 1 or 3, level was won
+					
+					if (runLevel(level, ONE) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 2, 'a');
 					}
-
-					}
-
+					
 					break;
-
+					
 				case 2: switch (subtype) {
 				case 'a':
 
@@ -368,7 +378,7 @@ int main() {
 
 					level = Level(new Offsets(1), triggers);
 
-					if (runLevel(level, 1) % 2 == 1) { //is either 1 or 3, level was won
+					if (runLevel(level, TWO_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 2, 'b');
 					}
 
@@ -404,7 +414,7 @@ int main() {
 
 					level = Level(new Offsets(-1), triggers);
 
-					if (runLevel(level, 2) % 2 == 1) { //is either 1 or 3, level was won
+					if (runLevel(level, TWO_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 3, 'a');
 					}
 
@@ -452,7 +462,7 @@ int main() {
 
 					level = Level(new Offsets(0, 0, 0, 2), triggers);
 
-					if (runLevel(level, 3) % 2 == 1) { //is either 1 or 3, level was won
+					if (runLevel(level, THREE_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 3, 'b');
 					}
 
@@ -477,7 +487,7 @@ int main() {
 
 					level = Level(new Offsets(0, 0, 0, 5), triggers);
 
-					if (runLevel(level, 4) % 2 == 1) { //is either 1 or 3
+					if (runLevel(level, THREE_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 4, 'a');
 					}
 
@@ -497,7 +507,7 @@ int main() {
 					break;
 
 				case 4: switch (subtype) {
-				case 'a': {
+				case 'a':
 
 					cls();
 
@@ -516,10 +526,8 @@ int main() {
 
 					level = Level(new Offsets(-2, 0, 0, 1), triggers);
 
-					if (runLevel(level, 5) % 2 == 1) { //is either 1 or 3
+					if (runLevel(level, FOUR_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 4, 'b');
-					}
-
 					}
 
 					break;
@@ -546,7 +554,7 @@ int main() {
 
 					level = Level(new Offsets(3, 0, 0, 4), triggers);
 
-					if (runLevel(level, 6) % 2 == 1) { //is either 1 or 3
+					if (runLevel(level, FOUR_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 4, 'c');
 					}
 
@@ -575,8 +583,8 @@ int main() {
 
 					level = Level(new Offsets(-5, 0, 0, 4), triggers);
 
-					if (runLevel(level, 7) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 5, '?');
+					if (runLevel(level, FOUR_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 5, 'a');
 					}
 
 					break;
@@ -594,11 +602,11 @@ int main() {
 
 					break;
 
-
-				case 5: {
-
+				case 5: switch (subtype) {
+				case 'a': 
+					
 					cls();
-
+					
 					out << "You can consider this level to be the graduating exam for the tutorial.\n"
 						<< "This level introduces another new concept called the dynamic offset.  You\n"
 						<< "will not be told how this concept works; you need to figure this out\n"
@@ -609,29 +617,151 @@ int main() {
 						<< "Note that in future levels, you may not be told whether the level is based\n"
 						<< "on previous levels or if the level introduces a new concept.  You will need\n"
 						<< "to consider both cases if you want to conquer enigma\n\n";
-
+					
 					triggers.push_back(Trigger("\nenigma", " is equal to itself.",
 						"\nAccess granted.\n\nCongratulations!  You have completed the tutorial for enigma!\nGood luck with the harder levels!  (You'll need it...)", bitset<3>(6ul) ));
 					triggers.push_back(Trigger("\nhelp",
 						" cannot be given until \"enigma\" appears!",
 						"\nLook up the reflexive property.\nSometimes, one can expect different results\nfrom doing the same thing...") );
-
-					help();
-
+					
 					level = Level(new Offsets(0, -1), triggers);
-
-					if (runLevel(level, 8) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 6, '?');
+					
+					if (runLevel(level, FIVE_A) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 5, 'b');
 					}
-
+					
+					break;
+					
+				case 'b': //type == 5
+					
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", " is\nenigma is\n enigma is a perfect place!") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nFarquaad's a tad delusional, if his singing puppets are any indication...") );
+					triggers.push_back(Trigger("\nduloc", "", "\nAccess granted.\n",
+						bitset<3>(2ul) )); 
+					
+					level = Level(new Offsets(5, -2), triggers);
+					
+					if (runLevel(level, FIVE_B) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 5, 'c');
 					}
+					
+					break;
+					
+				case 'c': //type == 5
+					
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", " is no place.") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nNo place is a enigma.\n(it's a Greek pun, if you didn't know that before)") );
+					triggers.push_back(Trigger("\nutopia", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Offsets(-2, -3, 0, 4), triggers);
+					
+					if (runLevel(level, FIVE_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 6, 'a');
+					}
+					
+					break;
+					
+				default: //type == 5
+					
+					out << "Please input \"5a\", \"5b\", or \"5c\".\n"
+						<< "Press enter to continue.";
+
+					pauseOutput();
 
 					break;
-
-				case 6: {
-
+					
+					}
+					
+					break;
+					
+				case 6: switch (subtype) {
+				case 'a':
+					
 					cls();
-
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", "\nSpeak, friend, and enter.") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nHere's a hint: The answer is in Tolkien's Elvish") );
+					triggers.push_back(Trigger("\nfriend", "",
+						"\nRight idea, wrong language...\n(make \"help\" appear if you don't understand)") );
+					triggers.push_back(Trigger("\nmellon", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Shuffle(3,  0, 2, 1), triggers);
+					
+					if (runLevel(level, SIX_A) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 6, 'b');
+					}
+					
+					break;
+					
+				case 'b': //type == 6
+					
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", "\n5603248534") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"You really should look at your keyboard more often.\n(or borrow somebody else's QWERTY keyboard)") );
+					triggers.push_back(Trigger("\ntypewriter", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Shuffle(5,  4, 3, 2, 1, 0), triggers);
+					
+					if (runLevel(level, SIX_B) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 6, 'c');
+					}
+					
+					break;
+					
+				case 'c': //type == 6
+				
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", " for the laughter, enigma for the tears") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nDream until your dreams come true!") );
+					triggers.push_back(Trigger("\nsing", "", "\nAccess granted\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Shuffle(9,  4, 3, 7, 1, 8, 0, 2, 6, 5), triggers);
+					
+					if (runLevel(level, SIX_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 7, 'a');
+					}
+					
+					break;
+					
+				default: //type == 6
+					
+					out << "Please input \"6a\", \"6b\", or \"6c\".\n"
+						<< "Press enter to continue.";
+					
+					pauseOutput();
+					
+					break;
+					
+					}
+					
+					break;
+					
+				case 7: switch (subtype) {
+				case 'a':
+					
+					cls();
+					help();
+					
 					triggers.push_back(Trigger("\nenigma", " is a capital letter.") );
 					triggers.push_back(Trigger("\nhelp",
 						" cannot be given until \"enigma\" appears!",
@@ -639,22 +769,73 @@ int main() {
 					triggers.push_back(Trigger("\nacapitalletter", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					triggers.push_back(Trigger("\nA", "", "\nVery funny...\n", bitset<3>(1ul) ));
-
+					
 					help();
-
+					
 					level = Level(new Offsets(0, 0, 1), triggers);
-
-					if (runLevel(level, 9) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 7, '?');
+					
+					if (runLevel(level, SEVEN_A) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 7, 'b');
 					}
-
-					}
-
+					
 					break;
-
-				case 7: {
+					
+				case 'b': //type == 7
+				
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", " could be used as a footstool\nor a table to play Scrabble on") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nWe could use him as a footstool\nor a table to play Scrabble on,\n then tie him up,\n then beat him up,\nthen throw him out of Babylon!") );
+					triggers.push_back(Trigger("\ndaniel", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Offsets(3, 0, -2), triggers);
+					
+					if (runLevel(level, SEVEN_B) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 7, 'c');
+					}
+					
+					break;
+					
+				case 'c': //type == 7
+				
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", "\nqw_ ws_ cf_ ng_ ds_ ,l_ mk_ jk_ 3w_ bg_ po_ mk_ vb_") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nYou really should look at your keyboard more often.\n(or borrow somebody else's QWERTY keyboard)") );
+					triggers.push_back(Trigger("\nextrapolation", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Offsets(-4, 0, 4, 3), triggers);
+					
+					if (runLevel(level, SEVEN_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 8, 'a');
+					}
+					
+					break;
+					
+				default:
+					
+					out << "Please input \"7a\", \"7b\", or \"7c\".\n"
+						<< "Press enter to continue.";
+					
+					pauseOutput();
+					
+					break;
+					
+					}
+					
+					break;
+					
+				case 8: switch (subtype) {
+				case 'a':
 
 					cls();
+					help();
 
 					triggers.push_back(Trigger("\nenigma",
 						" is occasionally literal.") );
@@ -666,46 +847,85 @@ int main() {
 
 					help();
 
-					level = Level(new Switch(
+					level = Level(new Switch(2,
 						new Offsets(3), new Offsets(-4, 0, 0, 3) ),
 						triggers);
 
-					if (runLevel(level, 10) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 8, '?');
-					}
-
+					if (runLevel(level, EIGHT_A) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 8, 'b');
 					}
 
 					break;
-
-				case 8: {
-
+					
+				case 'b': //type == 8
+					
 					cls();
-
+					help();
+					
 					triggers.push_back(Trigger("\nenigma",
-						" is a mode of transportation defined by three points.") );
+						" is a tiny country within a country.") );
 					triggers.push_back(Trigger("\nhelp",
 						" cannot be given until \"enigma\" appears!",
-						"\nThree points define a -----.\nIt's time to go back to geometry class...") );
-					triggers.push_back(Trigger("\nplane", "", "\nAccess granted.\n",
+						"\nIt also happens to be the smallest country in the world...") );
+					triggers.push_back(Trigger("\nvaticancity", "", "\nAccess Granted.\n",
 						bitset<3>(2ul) ));
-
+					
 					help();
-
-					level = Level(new Offsets(-7, -2, 1), triggers);
-
-					if (runLevel(level, 11) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 9, '?');
+					
+					level = Level(new Switch(2,
+						new Offsets(0, 3, 0, 4), new Offsets(0, 0, -2, 6) ),
+						triggers);
+					
+					if (runLevel(level, EIGHT_B) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 8, 'c');
 					}
-
-					}
-
+					
 					break;
-
-				case 9: {
-
+					
+				case 'c': //type == 8
+				
 					cls();
-
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", "\nThe developer got lazy.\nThe password is \"word\".") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\n...Seriously?  You seriously need help?!?") );
+					triggers.push_back(Trigger("\nword", "", "\n...meh, you won...\n",
+						bitset<3>(2ul) ));
+					
+					tempLayers[0] = new Shuffle(6,  3, 5, 1, 4, 0, 2);
+					
+					level = Level(new Switch(4, 
+						new Offsets(0, 1, 0, 3),
+						tempLayers[0],
+						new Offsets(3, 0, -1, 2),
+						tempLayers[0]) , triggers);
+					
+					if (runLevel(level, EIGHT_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 5, 'c');
+					}
+					
+					break;
+					
+				default: //type == 8
+					
+					out << "Please input \"8a\", \"8b\", or \"8c\".\n"
+						<< "Press enter to continue.";
+					
+					pauseOutput();
+					
+					break;
+					
+					}
+					
+					break;
+					
+				case 9: switch (subtype) {
+				case 'a':
+					
+					cls();
+					help();
+					
 					triggers.push_back(Trigger("\nenigma",
 						" is an annulus of information.") );
 					triggers.push_back(Trigger("\nhelp",
@@ -714,74 +934,23 @@ int main() {
 					triggers.push_back(Trigger("\ncd", "", "\nCheck your capitalization...") );
 					triggers.push_back(Trigger("\nCD", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
-
+					
 					help();
-
-					level = Level(new Stack(
+					
+					level = Level(new Stack(2,
 						new Offsets(6, 0, 0, 4), new Offsets(6, 0, 0, 0, 6) ),
 						triggers);
-
-					if (runLevel(level, 12) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 10, '?');
+					
+					if (runLevel(level, NINE_A) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 9, 'b');
 					}
-
-					}
-
+					
 					break;
-
-				case 10: {
-
-					cls();
-
-					triggers.push_back(Trigger("\nenigma",
-						" is a tiny country within a country.") );
-					triggers.push_back(Trigger("\nhelp",
-						" cannot be given until \"enigma\" appears!",
-						"\nIt also happens to be the smallest country in the world...") );
-					triggers.push_back(Trigger("\nvaticancity", "", "\nAccess Granted.\n",
-						bitset<3>(2ul) ));
-
-					help();
-
-					level = Level(new Switch(
-						new Offsets(0, 3, 0, 4), new Offsets(0, 0, -2, 6) ),
-						triggers);
-
-					if (runLevel(level, 13) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 11, '?');
-					}
-
-					}
-
-					break;
-
-				case 11: {
-
-					cls();
-
-					triggers.push_back(Trigger("\nenigma",
-						" stands alone 'twixt water and stone.") );
-					triggers.push_back(Trigger("\nhelp",
-						" cannot be given until \"enigma\" appears!",
-						"\nYou need to read a few more Redwall books!\n(Alternatively, you could creatively use an internet search engine...)\n  \"'Twixt water and stone I stand alone\n   Sounding burnt, but alive I survive!\"\n(This one is quite hard, even with searching!)") );
-					triggers.push_back(Trigger("\nash", "", "\nAccess granted.\n",
-						bitset<3>(2ul) ));
-
-					out << "You should know what to do by now...\n\n";
-
-					level = Level(new Offsets(14, -1, -2, 3, 6), triggers);
-
-					if (runLevel(level, 14) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 12, '?');
-					}
-
-					}
-
-					break;
-
-				case 12: {
+					
+				case 'b': //type == 9
 					
 					cls();
+					help();
 					
 					triggers.push_back(Trigger("\nenigma",
 						" was what hurts the most.") );
@@ -798,21 +967,142 @@ int main() {
 					
 					help();
 					
-					level = Level(new Stack(
+					level = Level(new Stack(2,
 						new Offsets(6, -1, 0, 4), new Offsets(6, 1, 0, 0, 6) ),
 						triggers);
 					
-					if (runLevel(level, 15) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 13, '?');
+					if (runLevel(level, NINE_B) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 9, 'c');
 					}
+					
+					break;
+					
+				case 'c': //type == 9
+				
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", " is needed by dancers.") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nThe painter needs a ladder and brush.\nThe artist needs an easel.") );
+					triggers.push_back(Trigger("\nafiddlerstwo", "", "\nSorry, not quite.  Keep looking!") );
+					triggers.push_back(Trigger("\nafiddlerstune", "", "\nAccess granted\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Switch(3,
+						new Offsets(0, -1, 0, 0, 6),
+						new Shuffle(8,   4, 7, 0, 2, 3, 5, 1, 6),
+						new Offsets(0, 0, 1, 2) ),
+						triggers);
+					
+					if (runLevel(level, NINE_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 10, 'a');
+					}
+					
+					break;
+					
+				default:
+					
+					out << "Please input \"9a\", \"9b\", or \"9c\".\n"
+						<< "Press enter to continue.";
+					
+					pauseOutput();
+					
+					break;
 					
 					}
 					
 					break;
 					
-				case 13: {
-
+				case 10: switch (subtype) {
+				case 'a':
+					
 					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma",
+						" is a mode of transportation defined by three points.") );
+					triggers.push_back(Trigger("\nhelp",
+						" cannot be given until \"enigma\" appears!",
+						"\nThree points define a -----.\nIt's time to go back to geometry class...") );
+					triggers.push_back(Trigger("\nplane", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					help();
+					
+					level = Level(new Offsets(-7, -2, 1), triggers);
+					
+					if (runLevel(level, TEN_A) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 10, 'b');
+					}
+					
+					break;
+					
+				case 'b': //type == 10
+				
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", "\nThe developer got lazy.\nThe password is \"word\".") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\n...Seriously?  You seriously need help?!?") );
+					triggers.push_back(Trigger("\nword", "", "\n...meh, you won...\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Offsets(-3, 2, 0, 4, 13), triggers);
+					
+					if (runLevel(level, TEN_B) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 10, 'c');
+					}
+					
+					break;
+					
+				case 'c': //type == 10
+					
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma",
+						" stands alone 'twixt water and stone.") );
+					triggers.push_back(Trigger("\nhelp",
+						" cannot be given until \"enigma\" appears!",
+						"\nYou need to read a few more Redwall books!\n(Alternatively, you could creatively use an internet search engine...)\n  \"'Twixt water and stone I stand alone\n   Sounding burnt, but alive I survive!\"") );
+					triggers.push_back(Trigger("\nash", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					out << "You should know what to do by now...\n\n";
+					
+					level = Level(new Offsets(14, -1, -2, 3, 6), triggers);
+					
+					if (runLevel(level, TEN_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 10, 'd');
+					}
+					
+					break;
+					
+				case 'd': //type == 10
+				
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", "\nThe developer got lazy.\nThe password is \"word\".") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\n...Seriously?  You seriously need help?!?") );
+					triggers.push_back(Trigger("\nword", "", "\n...meh, you won...\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Offsets(5, -1, 4, 8, 20), triggers);
+					
+					if (runLevel(level, TEN_D) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 10, 'e');
+					}
+					
+					break;
+					
+				case 'e': //type == 10
+					
+					cls();
+					help();
 
 					triggers.push_back(Trigger("\nenigma",
 						"\n128-10-93-85-10-128-98-112-6-6-25-126-39-1-68-78") );
@@ -826,20 +1116,33 @@ int main() {
 
 					level = Level(new Offsets(107, -84, 34, 37, 17), triggers);
 
-					if (runLevel(level, 16) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 14, '?');
-					}
-
+					if (runLevel(level, TEN_E) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 11, 'a');
 					}
 
 					break;
-
-				case 14: {
+					
+				default:
+					
+					out << "Please input \"10a\", \"10b\", \"10c\", \"10d\", or \"10e\".\n"
+						<< "Press enter to continue.";
+					
+					pauseOutput();
+					
+					break;
+					
+					}
+					
+					break;
+					
+				case 11: switch (subtype) {
+				case 'a':
 					
 					cls();
+					help();
 					
-					vector<string> replies;
-					vector<bool> tripsFlag, beatsLevel, easterEgg;
+					replies.clear();
+					tripsFlag.clear(); beatsLevel.clear(); easterEgg.clear();
 					
 					for (int i = 0; i < 3; i++) {
 						replies.push_back(" is broken.  Please try again later.");
@@ -933,21 +1236,20 @@ int main() {
 					
 					out << "You *really* should know what to do by now...\n\n";
 					
-					level = Level(new Stack(
+					level = Level(new Stack(2,
 						new Offsets(12, 3, 6, 5, 7), new Offsets(51, -2, 3, 4, 5) ),
 						triggers);
 					
-					if (runLevel(level, 17) % 2 == 1) { //is either 1 or 3
-						nextLevel(type, subtype, 15, '?');
-					}
-					
+					if (runLevel(level, ELEVEN_A) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 11, 'b');
 					}
 					
 					break;
 					
-				case 15: {
+				case 'b': //type == 11
 					
 					cls();
+					help();
 					
 					triggers.push_back(Trigger("\nenigma",
 						" speaks its only word nevermore.") );
@@ -959,17 +1261,100 @@ int main() {
 					
 					out << "You *really* should know what to do by now...\n\n";
 					
-					level = Level(new Stack(
+					level = Level(new Stack(3,
 						new Offsets(-32, 21, 15, 12, 5), new Offsets(12, -2, 15, 5, 17),
 						new Offsets(2, 30, -30, 8, 6) ),
 						triggers);
 					
-					int dummy = runLevel(level, 18);
+					if (runLevel(level, ELEVEN_B) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 11, 'c');
+					}
+					
+					break;
+					
+				case 'c': //type == 11
+					
+					cls();
+					help();
+					
+					triggers.push_back(Trigger("\nenigma", "\nThe developer got lazy.\nThe password is \"word\".") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\n...Seriously?  You seriously need help?!?") );
+					triggers.push_back(Trigger("\nword", "", "\n...meh, you won...\n",
+						bitset<3>(2ul) ));
+					
+					level = Level(new Stack(3,
+						new Shuffle(6,  5, 1, 2, 4, 0, 3), new Offsets(3, 5, -7, 4, 4),
+						new Shuffle(5,  3, 1, 0, 4, 2) ),
+						triggers);
+					
+					if (runLevel(level, ELEVEN_C) % 2 == 1) { // is either 1 or 3 if level was won
+						nextLevel(type, subtype, 12, 'a');
+					}
+					
+					break;
+					
+				default:
+					
+					out << "Please input \"11a\", \"11b\", or \"11c\".\n"
+						<< "Press enter to continue.";
+					
+					pauseOutput();
+					
+					break;
 					
 					}
 					
 					break;
 					
+				case 12:
+					
+					cls();
+					
+					triggers.push_back(Trigger("\nenigma", ", enigma,\nYou have to know your enigma!") );
+					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
+						"\nYou have to remember\nWhich one is who\nAnd remember his birthday\nAnd the size of his shoe!\n(Yes, this is hard.  Have fun!)") );
+					triggers.push_back(Trigger("\nhistory", "", "\nAccess granted.\n",
+						bitset<3>(2ul) ));
+					
+					tempLayers[0] =
+					new Switch(3,
+						new Switch(2,
+							new Offsets(1),
+							new Offsets(26, 0, 0, 0, 6) ),
+						new Switch(1,
+							new Offsets(-2) ),
+						new Switch(2,
+							new Offsets(-4),
+							new Offsets(8) ) );
+					
+					(*tempLayers[0])[0](2) = new Stack(2, (*tempLayers[0])(1), (*tempLayers[0])(2) );
+					(*tempLayers[0])[1](1) = new Stack(2, (*tempLayers[0])(2), (*tempLayers[0])(0) );
+					(*tempLayers[0])[2](2) = (*tempLayers[0])[2](0);
+					(*tempLayers[0])[2](3) = new Stack(2, (*tempLayers[0])(0), (*tempLayers[0])(1) );
+					
+					level = Level(tempLayers[0], triggers);
+					
+					if (runLevel(level, TWELVE) % 2 == 1) { // is either 1 or 3 if level is won
+						nextLevel(type, subtype, 12, 'b');
+					}
+					
+					break;
+					
+				#ifdef FALSE // I'm lazy.
+				case 13:
+				
+					break;
+				
+				case 14:
+					
+					break;
+					
+				case 15:
+					
+					break;
+				#endif // FALSE; Again, I'm lazy.
+				
 				default:
 					
 					out << "Please enter a valid input (i.e., \"1\", \"2b\", \"h\", etc.)\n"
@@ -1071,101 +1456,180 @@ void referenced() {
 		 << "Authors of referenced material in unsolved levels are shown at the\n"
 		 << "end of the list in a randomized order.\n\n";
 
-	if (beaten[0] == true) {
+	if (beaten[ONE] == true) {
 		out << "Level  1 :  This level does not reference any material.\n";
 	}
 
-	if (beaten[1] == true) {
+	if (beaten[TWO_A] == true) {
 		out << "Level  2a:  This level does not reference any material.\n";
 	}
 
-	if (beaten[2] == true) {
+	if (beaten[TWO_B] == true) {
 		out << "Level  2b:  This level does not reference any material.\n";
 	}
 
-	if (beaten[3] == true) {
+	if (beaten[THREE_A] == true) {
 		out << "Level  3a:  This level does not reference any material.\n";
 	}
 
-	if (beaten[4] == true) {
+	if (beaten[THREE_B] == true) {
 		out << "Level  3b:  This level does not reference any material.\n";
 	}
 
-	if (beaten[5] == true) {
+	if (beaten[FOUR_A] == true) {
 		out << "Level  4a:  This level references the \"duck test\".\n";
 	}
 
-	if (beaten[6] == true) {
+	if (beaten[FOUR_B] == true) {
 		out << "Level  4b:  This level references the phrase \"The grass is always greener\n"
 			<< "   on the other side.\n";
 	}
 
-	if (beaten[7] == true) {
+	if (beaten[FOUR_C] == true) {
 		out << "Level  4c:  This level references the song \"Hole in the Bottom of the Sea\"\n"
 			<< "   from Sesame Street.";
 	} else {
 		unsolved.push_back("Sesame Street\n");
 	}
 
-	if (beaten[8] == true) {
-		out << "Level  5 :  This level references the reflexive property from algebra.\n";
+	if (beaten[FIVE_A] == true) {
+		out << "Level  5a:  This level references the reflexive property from algebra.\n";
+	}
+	
+	if (beaten[FIVE_B] == true) {
+		out << "Level  5b:  This level references a song from the movie Shrek.\n";
+	} else {
+		unsolved.push_back("Dreamworks\n");
+	}
+	
+	if (beaten[FIVE_C] == true) {
+		out << "Level  5c:  This level references a pun for the word \"utopia\";\n"
+			<< "   the word could either mean \"no place\" or \"good place\".\n";
+	}
+	
+	if (beaten[SIX_A] == true) {
+		out << "Level  6a:  This level references a scene from \"The Lord of the Rings\"\n";
+	} else {
+		unsolved.push_back("J. R. R. Tolkien\n");
+	}
+	
+	if (beaten[SIX_B] == true) {
+		out << "Level  6b:  This level does not reference any material.\n";
+	}
+	
+	if (beaten[SIX_C] == true) {
+		out << "Level  6c:  This level references the song \"Dream On\" by Aerosmith.\n";
+	} else {
+		unsolved.push_back("Aerosmith\n");
+	}
+	
+	if (beaten[SEVEN_A] == true) {
+		out << "Level  7a:  This level does not reference any material.\n";
+	}
+	
+	if (beaten[SEVEN_B] == true) {
+		out << "Level  7b:  This level references a song from Veggie Tales.\n";
+	} else {
+		unsolved.push_back("Phil Vischer\n");
+		unsolved.push_back("Mike Nawrocki\n");
+	}
+	
+	if (beaten[SEVEN_C] == true) {
+		out << "Level  7c:  This level does not reference any material\n";
+	}
+	
+	if (beaten[EIGHT_A] == true) {
+		out << "Level  8a:  This level does not reference any material.\n";
 	}
 
-	for (int i = 9; i < 11; i++) { //levels 6 and 7
-		if (beaten[i] == true) {
-			out << "Level  " << (i-3) << " :  This level does not reference any material.\n";
-		}
+	if (beaten[EIGHT_B] == true) {
+		out << "Level  8b:  This level references Vatican City (as you already know).\n";
+	}
+	
+	if (beaten[EIGHT_C] == true) {
+		out << "Level  8c:  ...\n";
 	}
 
-	if (beaten[11] == true) {
-		out << "Level  8 :  This level references the definition of \"plane\" in geometry.\n";
+	if (beaten[NINE_A] == true) {
+		out << "Level  9a:  This level does not reference any material.\n";
+	}
+	
+	if (beaten[NINE_B] == true) {
+		out << "Level  9b:  This level references the chorus of the song \"What Hurts\n"
+			<< "   the Most\" by Rascal Flatts.\n";
+	} else {
+		unsolved.push_back("Rascall Flatts\n");
+	}
+	
+	if (beaten[NINE_C] == true) {
+		out << "Level  9c:  This level references several of the many variants of \"Pop Goes the Weasel\","
+			<< "   one of which is featured on Barney.\n";
+	} else {
+		unsolved.push_back("Barney");
 	}
 
-	if (beaten[12] == true) {
-		out << "Level  9 :  This level does not reference any material.\n";
+	if (beaten[TEN_A] == true) {
+		out << "Level 10a:  This level references the definition of \"plane\" in geometry.\n";
 	}
-
-	if (beaten[13] == true) {
-		out << "Level 10 :  This level references Vatican City (as you already know).\n";
+	
+	if (beaten[TEN_B] == true) {
+		out << "Level 10b:  ...\n";
 	}
-
-	if (beaten[14] == true) {
-		out << "Level 11:  This level references a riddle in the book \"Taggerung\" by\n"
+	
+	if (beaten[TEN_C] == true) {
+		out << "Level 10c:  This level references a riddle in the book \"Taggerung\" by\n"
 			 << "   Brian Jacques.  The solution to the referenced part of the riddle was\n"
 			 << "   the ash tree in the abbey.\n";
 	} else {
 		unsolved.push_back("Brian Jacques\n");
 	}
-
-	if (beaten[15] == true) {
-		out << "Level 12:  This level references the chorus of the song \"What Hurts\n"
-			 << "   the Most\" by Rascal Flatts.\n";
-	} else {
-		unsolved.push_back("Rascall Flatts\n");
+	
+	if (beaten[TEN_D] == true) {
+		out << "Level 10d:  ...\n";
 	}
-
-	if (beaten[16] == true) {
-		out << "Level 13:  This level references the simple code that appears at the end\n"
+	
+	if (beaten[TEN_E] == true) {
+		out << "Level 10e  This level references the simple code that appears at the end\n"
 			 << "   of the the book \"Digital Fortress\" by Dan Brown.\n";
 	} else {
 		unsolved.push_back("Dan Brown\n");
 	}
-
-	if (beaten[17] == true) {
-		out << "Level 14:  This level references the chorus of the song \"Unspoken\"\n"
-			 << "   by Lacuna Coil.\n";
+	
+	if (beaten[ELEVEN_A] == true) {
+		out << "Level 11a:  This level references the chorus of the song \"Unspoken\"\n"
+			<< "   by Lacuna Coil.\n";
 	} else {
 		unsolved.push_back("Lacuna Coil\n");
 	}
-
-	if (beaten[18] == true) {
-		out << "Level 15:  This level references the beginning stanza of the poem\n"
-			 << "   \"The Raven\" by Edgar Allen Poe.\n";
+	
+	if (beaten[ELEVEN_B] == true) {
+		out << "Level 11b:  This level references the beginning stanza of the poem\n"
+			<< "   \"The Raven\" by Edgar Allen Poe.\n";
 	} else {
 		unsolved.push_back("Edgar Allen Poe\n");
 	}
+	
+	if (beaten[ELEVEN_C] == true) {
+		out << "Level 11c:  ...\n";
+	}
+	
+	if (beaten[TWELVE] == true) {
+		out << "Level 12 :  This level references the song \"The Things You Have to Know\"\n"
+			<< "   from the movie \"The Hoober Bloob Highway\" by Dr. Seuss.\n";
+	} else {
+		unsolved.push_back("Dr. Seuss\n");
+	}
 
-	if (beaten[19] == true) {
+	if (beaten[THIRTEEN] == true) {
+	}
+
+	if (beaten[FOURTEEN] == true) {
+	}
+
+	if (beaten[FIFTEEN] == true) {
+	}
+
+	if (beaten[SIMPLE] == true) {
 		out << "Level Builder:  This level references The Answer to Life, the Universe,\n"
 			 << "   and Everything, which is a joke from \"The Hitchhiker's Guide by\n"
 			 << "   Douglas Adams.\n";

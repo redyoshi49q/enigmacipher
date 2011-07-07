@@ -88,7 +88,7 @@
 			
 			Layer* getLayer(int);
 			
-			int Trigger::getNumOfLayers() { return layerArray.size(); }
+			int getNumOfLayers() { return layerArray.size(); }
 			
 		private:
 			

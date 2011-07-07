@@ -1,7 +1,7 @@
 # Project: enigma
 
-CPP  = g++.exe
-CC   = gcc.exe
+CPP  = g++
+CC   = gcc
 LIBS =
 COMPFLAGS =
 START = disk.o flipdisk.o global.o homebrew.o layer.o level.o offsets.o option.o shuffle.o stack.o switch.o trigger.o

@@ -244,6 +244,7 @@ int main() {
 				c = getInt();
 
 				cls();
+				help();
 
 				triggers.push_back(Trigger("\nenigma", " is the answer to everything.") );
 				triggers.push_back(Trigger("\nhelp",
@@ -251,8 +252,6 @@ int main() {
 					"\nenigma is also the answer to life and the universe.") );
 				triggers.push_back(Trigger("\n42", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
-
-				help();
 
 				level = Level(new Offsets(s, d, v, b, c), triggers);
 
@@ -306,6 +305,9 @@ int main() {
 				oldSubtype = subtype;
 
 			}
+			
+			out << "type is " << type << ", subtype is " << subtype << endl; // DEBUG
+			pauseOutput();
 
 			switch (type) {
 				case 1:
@@ -770,8 +772,6 @@ int main() {
 						bitset<3>(2ul) ));
 					triggers.push_back(Trigger("\nA", "", "\nVery funny...\n", bitset<3>(1ul) ));
 					
-					help();
-					
 					level = Level(new Offsets(0, 0, 1), triggers);
 					
 					if (runLevel(level, SEVEN_A) % 2 == 1) { // is either 1 or 3 if level was won
@@ -845,8 +845,6 @@ int main() {
 					triggers.push_back(Trigger("\noccasionallyliteral", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-					help();
-
 					level = Level(new Switch(2,
 						new Offsets(3), new Offsets(-4, 0, 0, 3) ),
 						triggers);
@@ -869,8 +867,6 @@ int main() {
 						"\nIt also happens to be the smallest country in the world...") );
 					triggers.push_back(Trigger("\nvaticancity", "", "\nAccess Granted.\n",
 						bitset<3>(2ul) ));
-					
-					help();
 					
 					level = Level(new Switch(2,
 						new Offsets(0, 3, 0, 4), new Offsets(0, 0, -2, 6) ),
@@ -935,8 +931,6 @@ int main() {
 					triggers.push_back(Trigger("\nCD", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					help();
-					
 					level = Level(new Stack(2,
 						new Offsets(6, 0, 0, 4), new Offsets(6, 0, 0, 0, 6) ),
 						triggers);
@@ -964,8 +958,6 @@ int main() {
 					
 					layers.push_back(new Offsets(6, -1, 0, 4) );
 					layers.push_back(new Offsets(6, 1, 0, 0, 6) );
-					
-					help();
 					
 					level = Level(new Stack(2,
 						new Offsets(6, -1, 0, 4), new Offsets(6, 1, 0, 0, 6) ),
@@ -1027,8 +1019,6 @@ int main() {
 						"\nThree points define a -----.\nIt's time to go back to geometry class...") );
 					triggers.push_back(Trigger("\nplane", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
-					
-					help();
 					
 					level = Level(new Offsets(-7, -2, 1), triggers);
 					
@@ -1317,6 +1307,8 @@ int main() {
 					triggers.push_back(Trigger("\nhistory", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
+					out << "Happy!\n"; // DEBUG
+					
 					tempLayers[0] =
 					new Switch(3,
 						new Switch(2,
@@ -1327,11 +1319,11 @@ int main() {
 						new Switch(2,
 							new Offsets(-4),
 							new Offsets(8) ) );
-					
-					(*tempLayers[0])[0](2) = new Stack(2, (*tempLayers[0])(1), (*tempLayers[0])(2) );
-					(*tempLayers[0])[1](1) = new Stack(2, (*tempLayers[0])(2), (*tempLayers[0])(0) );
-					(*tempLayers[0])[2](2) = (*tempLayers[0])[2](0);
-					(*tempLayers[0])[2](3) = new Stack(2, (*tempLayers[0])(0), (*tempLayers[0])(1) );
+							
+					(*tempLayers[0])[0](2) = new Stack(2, &( (*tempLayers[0])[1] ), &( (*tempLayers[0])[2] ) );
+					(*tempLayers[0])[1](1) = new Stack(2, &( (*tempLayers[0])[2] ), &( (*tempLayers[0])[0] ) );
+					(*tempLayers[0])[2](2) = &( (*tempLayers[0])[2][0] );
+					(*tempLayers[0])[2](3) = new Stack(2, &( (*tempLayers[0])[0] ), &( (*tempLayers[0])[1] ) );
 					
 					level = Level(tempLayers[0], triggers);
 					

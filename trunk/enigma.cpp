@@ -306,9 +306,6 @@ int main() {
 
 			}
 			
-			out << "type is " << type << ", subtype is " << subtype << endl; // DEBUG
-			pauseOutput();
-
 			switch (type) {
 				case 1:
 					
@@ -1300,14 +1297,13 @@ int main() {
 				case 12:
 					
 					cls();
+					help();
 					
 					triggers.push_back(Trigger("\nenigma", ", enigma,\nYou have to know your enigma!") );
 					triggers.push_back(Trigger("\nhelp", " cannot be given until \"enigma\" appears!",
 						"\nYou have to remember\nWhich one is who\nAnd remember his birthday\nAnd the size of his shoe!\n(Yes, this is hard.  Have fun!)") );
 					triggers.push_back(Trigger("\nhistory", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
-					
-					out << "Happy!\n"; // DEBUG
 					
 					tempLayers[0] =
 					new Switch(3,

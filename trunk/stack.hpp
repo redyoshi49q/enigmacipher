@@ -43,6 +43,8 @@
 			void bufferCycle(char&);
 			bool needsBufferCycle();
 			
+			bool collectLayers(vector<Layer*>&);
+			
 			// static Layer* getLayer();
 			
 		private:

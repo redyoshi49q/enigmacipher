@@ -123,4 +123,18 @@ Layer* Switch::getLayer() {
 	
 	//return new switch Layer*
 	
+	return NULL; // this is a stub
+	
+}
+
+bool Switch::collectLayers(vector<Layer*> &layerList) {
+	
+	bool returned = Layer::collectLayers(layerList);
+	
+	if (returned == true) {
+		for (int i = 0; i < layers.size(); i++) {
+			layers[i]->collectLayers(layerList);
+		}
+	} // if false, just implicitly return
+	
 }

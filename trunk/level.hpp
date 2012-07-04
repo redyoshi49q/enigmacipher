@@ -59,6 +59,9 @@
 			
 		private:
 			
+			Level(const Level&); // this disables the default constructor (it's private)
+			Level& operator = (const Level&); // this disables the copy constructor (it's private)
+			
 			#ifdef linux
                 int mygetch();
 			#endif

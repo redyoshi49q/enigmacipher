@@ -83,6 +83,8 @@
 				 *   class allows the main program to call this function on Stack and Switch objects
 				 *   from Layer pointers for convenience.
 				 */
+
+			virtual ~Layer() {} // virtual destructor
 			
 			// virtual static Layer* getLayer(Layer*?) = 0;
 				/*this isn't actually here because functions can't be both virtual and static.

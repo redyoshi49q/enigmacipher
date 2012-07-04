@@ -51,7 +51,7 @@
 		ELEVEN_A, ELEVEN_B, ELEVEN_C, TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SIMPLE, SUBLEVELS};
 	
 	int main();
-	int runLevel(Level&, int);
+	int runLevel(Level*, int);
 	void welcome();
 	void help();
 	void referenced();

@@ -128,7 +128,7 @@ int main() {
 	welcome();
 	
 	string input;
-	Level level;
+	Level *level = NULL;
 	int type = 0, oldType = 0;
 	char subtype = '?', oldSubtype = '?';
 	int index = 0;
@@ -253,9 +253,12 @@ int main() {
 				triggers.push_back(Trigger("\n42", "", "\nAccess granted.\n",
 					bitset<3>(2ul) ));
 
-				level = Level(new Offsets(s, d, v, b, c), triggers);
+				level = new Level(new Offsets(s, d, v, b, c), triggers);
 
 				runLevel(level, SIMPLE);
+				
+				delete level;
+				level = NULL;
 
 				} break;
 
@@ -348,11 +351,14 @@ int main() {
 					
 					reply.clear();
 					
-					level = Level(new Offsets(), triggers);
+					level = new Level(new Offsets(), triggers);
 					
 					if (runLevel(level, ONE) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 2, 'a');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -375,11 +381,14 @@ int main() {
 						"\nWhat is the opposite of \"up\"?\n\nAs you can probably guess, the password is \"down\".  In order to make \"down\"\nappear, you need to type in the characters that come alphabetically before \"d\",\n\"o\", \"w\", and \"n\".  These characters are \"c\", \"n\", \"v\", and \"m\", which means\nthat typing \"cnvm\" will make \"down\" appear and beat the level.") );
 					triggers.push_back(Trigger("\ndown", "", "\nAccess granted.\n", bitset<3>(2ul) ));
 
-					level = Level(new Offsets(1), triggers);
+					level = new Level(new Offsets(1), triggers);
 
 					if (runLevel(level, TWO_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 2, 'b');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 
@@ -411,11 +420,14 @@ int main() {
 					triggers.push_back(Trigger("\nmiddle", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-					level = Level(new Offsets(-1), triggers);
+					level = new Level(new Offsets(-1), triggers);
 
 					if (runLevel(level, TWO_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 3, 'a');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 
@@ -458,12 +470,14 @@ int main() {
 					triggers.push_back(Trigger("\nthree", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-
-					level = Level(new Offsets(0, 0, 0, 2), triggers);
+					level = new Level(new Offsets(0, 0, 0, 2), triggers);
 
 					if (runLevel(level, THREE_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 3, 'b');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 
@@ -484,11 +498,14 @@ int main() {
 						"\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-					level = Level(new Offsets(0, 0, 0, 5), triggers);
+					level = new Level(new Offsets(0, 0, 0, 5), triggers);
 
 					if (runLevel(level, THREE_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 4, 'a');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 
@@ -523,11 +540,14 @@ int main() {
 					triggers.push_back(Trigger("\nduck", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-					level = Level(new Offsets(-2, 0, 0, 1), triggers);
+					level = new Level(new Offsets(-2, 0, 0, 1), triggers);
 
 					if (runLevel(level, FOUR_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 4, 'b');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 
@@ -551,11 +571,14 @@ int main() {
 						"\nThe grass is always greener on --- ----- ----.") );
 					triggers.push_back(Trigger("\ntheotherside", "\nAccess granted.\n", bitset<3>(2ul) ));
 
-					level = Level(new Offsets(3, 0, 0, 4), triggers);
+					level = new Level(new Offsets(3, 0, 0, 4), triggers);
 
 					if (runLevel(level, FOUR_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 4, 'c');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 
@@ -580,11 +603,14 @@ int main() {
 					triggers.push_back(Trigger("\nthesea", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-					level = Level(new Offsets(-5, 0, 0, 4), triggers);
+					level = new Level(new Offsets(-5, 0, 0, 4), triggers);
 
 					if (runLevel(level, FOUR_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 5, 'a');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 
@@ -623,11 +649,14 @@ int main() {
 						" cannot be given until \"enigma\" appears!",
 						"\nLook up the reflexive property.\nSometimes, one can expect different results\nfrom doing the same thing...") );
 					
-					level = Level(new Offsets(0, -1), triggers);
+					level = new Level(new Offsets(0, -1), triggers);
 					
 					if (runLevel(level, FIVE_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 5, 'b');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -642,11 +671,14 @@ int main() {
 					triggers.push_back(Trigger("\nduloc", "", "\nAccess granted.\n",
 						bitset<3>(2ul) )); 
 					
-					level = Level(new Offsets(5, -2), triggers);
+					level = new Level(new Offsets(5, -2), triggers);
 					
 					if (runLevel(level, FIVE_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 5, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -661,11 +693,14 @@ int main() {
 					triggers.push_back(Trigger("\nutopia", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Offsets(-2, -3, 0, 4), triggers);
+					level = new Level(new Offsets(-2, -3, 0, 4), triggers);
 					
 					if (runLevel(level, FIVE_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 6, 'a');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -696,11 +731,14 @@ int main() {
 					triggers.push_back(Trigger("\nmellon", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Shuffle(3,  0, 2, 1), triggers);
+					level = new Level(new Shuffle(3,  0, 2, 1), triggers);
 					
 					if (runLevel(level, SIX_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 6, 'b');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -715,11 +753,14 @@ int main() {
 					triggers.push_back(Trigger("\ntypewriter", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Shuffle(5,  4, 3, 2, 1, 0), triggers);
+					level = new Level(new Shuffle(5,  4, 3, 2, 1, 0), triggers);
 					
 					if (runLevel(level, SIX_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 6, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -734,11 +775,14 @@ int main() {
 					triggers.push_back(Trigger("\nsing", "", "\nAccess granted\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Shuffle(9,  4, 3, 7, 1, 8, 0, 2, 6, 5), triggers);
+					level = new Level(new Shuffle(9,  4, 3, 7, 1, 8, 0, 2, 6, 5), triggers);
 					
 					if (runLevel(level, SIX_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 7, 'a');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -769,11 +813,14 @@ int main() {
 						bitset<3>(2ul) ));
 					triggers.push_back(Trigger("\nA", "", "\nVery funny...\n", bitset<3>(1ul) ));
 					
-					level = Level(new Offsets(0, 0, 1), triggers);
+					level = new Level(new Offsets(0, 0, 1), triggers);
 					
 					if (runLevel(level, SEVEN_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 7, 'b');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -788,11 +835,14 @@ int main() {
 					triggers.push_back(Trigger("\ndaniel", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Offsets(3, 0, -2), triggers);
+					level = new Level(new Offsets(3, 0, -2), triggers);
 					
 					if (runLevel(level, SEVEN_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 7, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -807,11 +857,14 @@ int main() {
 					triggers.push_back(Trigger("\nextrapolation", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Offsets(-4, 0, 4, 3), triggers);
+					level = new Level(new Offsets(-4, 0, 4, 3), triggers);
 					
 					if (runLevel(level, SEVEN_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 8, 'a');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -842,13 +895,16 @@ int main() {
 					triggers.push_back(Trigger("\noccasionallyliteral", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 
-					level = Level(new Switch(2,
+					level = new Level(new Switch(2,
 						new Offsets(3), new Offsets(-4, 0, 0, 3) ),
 						triggers);
 
 					if (runLevel(level, EIGHT_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 8, 'b');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 					
@@ -865,13 +921,16 @@ int main() {
 					triggers.push_back(Trigger("\nvaticancity", "", "\nAccess Granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Switch(2,
+					level = new Level(new Switch(2,
 						new Offsets(0, 3, 0, 4), new Offsets(0, 0, -2, 6) ),
 						triggers);
 					
 					if (runLevel(level, EIGHT_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 8, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -888,7 +947,7 @@ int main() {
 					
 					tempLayers[0] = new Shuffle(6,  3, 5, 1, 4, 0, 2);
 					
-					level = Level(new Switch(4, 
+					level = new Level(new Switch(4, 
 						new Offsets(0, 1, 0, 3),
 						tempLayers[0],
 						new Offsets(3, 0, -1, 2),
@@ -897,6 +956,9 @@ int main() {
 					if (runLevel(level, EIGHT_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 5, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -928,13 +990,16 @@ int main() {
 					triggers.push_back(Trigger("\nCD", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Stack(2,
+					level = new Level(new Stack(2,
 						new Offsets(6, 0, 0, 4), new Offsets(6, 0, 0, 0, 6) ),
 						triggers);
 					
 					if (runLevel(level, NINE_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 9, 'b');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -953,16 +1018,17 @@ int main() {
 					triggers.push_back(Trigger("\nbeingsoclose", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					layers.push_back(new Offsets(6, -1, 0, 4) );
-					layers.push_back(new Offsets(6, 1, 0, 0, 6) );
-					
-					level = Level(new Stack(2,
-						new Offsets(6, -1, 0, 4), new Offsets(6, 1, 0, 0, 6) ),
+					level = new Level(new Stack(2,
+						new Offsets(6, -1, 0, 4),
+						new Offsets(6, 1, 0, 0, 6) ),
 						triggers);
 					
 					if (runLevel(level, NINE_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 9, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -978,7 +1044,7 @@ int main() {
 					triggers.push_back(Trigger("\nafiddlerstune", "", "\nAccess granted\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Switch(3,
+					level = new Level(new Switch(3,
 						new Offsets(0, -1, 0, 0, 6),
 						new Shuffle(8,   4, 7, 0, 2, 3, 5, 1, 6),
 						new Offsets(0, 0, 1, 2) ),
@@ -987,6 +1053,9 @@ int main() {
 					if (runLevel(level, NINE_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 10, 'a');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1017,11 +1086,14 @@ int main() {
 					triggers.push_back(Trigger("\nplane", "", "\nAccess granted.\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Offsets(-7, -2, 1), triggers);
+					level = new Level(new Offsets(-7, -2, 1), triggers);
 					
 					if (runLevel(level, TEN_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 10, 'b');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1036,11 +1108,14 @@ int main() {
 					triggers.push_back(Trigger("\nword", "", "\n...meh, you won...\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Offsets(-3, 2, 0, 4, 13), triggers);
+					level = new Level(new Offsets(-3, 2, 0, 4, 13), triggers);
 					
 					if (runLevel(level, TEN_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 10, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1059,11 +1134,14 @@ int main() {
 					
 					out << "You should know what to do by now...\n\n";
 					
-					level = Level(new Offsets(14, -1, -2, 3, 6), triggers);
+					level = new Level(new Offsets(14, -1, -2, 3, 6), triggers);
 					
 					if (runLevel(level, TEN_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 10, 'd');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1078,11 +1156,14 @@ int main() {
 					triggers.push_back(Trigger("\nword", "", "\n...meh, you won...\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Offsets(5, -1, 4, 8, 20), triggers);
+					level = new Level(new Offsets(5, -1, 4, 8, 20), triggers);
 					
 					if (runLevel(level, TEN_D) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 10, 'e');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1101,11 +1182,14 @@ int main() {
 
 					out << "You should know what to do by now...\n\n";
 
-					level = Level(new Offsets(107, -84, 34, 37, 17), triggers);
+					level = new Level(new Offsets(107, -84, 34, 37, 17), triggers);
 
 					if (runLevel(level, TEN_E) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 11, 'a');
 					}
+
+					delete level;
+					level = NULL;
 
 					break;
 					
@@ -1223,13 +1307,16 @@ int main() {
 					
 					out << "You *really* should know what to do by now...\n\n";
 					
-					level = Level(new Stack(2,
+					level = new Level(new Stack(2,
 						new Offsets(12, 3, 6, 5, 7), new Offsets(51, -2, 3, 4, 5) ),
 						triggers);
 					
 					if (runLevel(level, ELEVEN_A) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 11, 'b');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1248,7 +1335,7 @@ int main() {
 					
 					out << "You *really* should know what to do by now...\n\n";
 					
-					level = Level(new Stack(3,
+					level = new Level(new Stack(3,
 						new Offsets(-32, 21, 15, 12, 5), new Offsets(12, -2, 15, 5, 17),
 						new Offsets(2, 30, -30, 8, 6) ),
 						triggers);
@@ -1256,6 +1343,9 @@ int main() {
 					if (runLevel(level, ELEVEN_B) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 11, 'c');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1270,7 +1360,7 @@ int main() {
 					triggers.push_back(Trigger("\nword", "", "\n...meh, you won...\n",
 						bitset<3>(2ul) ));
 					
-					level = Level(new Stack(3,
+					level = new Level(new Stack(3,
 						new Shuffle(6,  5, 1, 2, 4, 0, 3), new Offsets(3, 5, -7, 4, 4),
 						new Shuffle(5,  3, 1, 0, 4, 2) ),
 						triggers);
@@ -1278,6 +1368,9 @@ int main() {
 					if (runLevel(level, ELEVEN_C) % 2 == 1) { // is either 1 or 3 if level was won
 						nextLevel(type, subtype, 12, 'a');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1321,11 +1414,14 @@ int main() {
 					(*tempLayers[0])[2](2) = &( (*tempLayers[0])[2][0] );
 					(*tempLayers[0])[2](3) = new Stack(2, &( (*tempLayers[0])[0] ), &( (*tempLayers[0])[1] ) );
 					
-					level = Level(tempLayers[0], triggers);
+					level = new Level(tempLayers[0], triggers);
 					
 					if (runLevel(level, TWELVE) % 2 == 1) { // is either 1 or 3 if level is won
 						nextLevel(type, subtype, 12, 'b');
 					}
+
+					delete level;
+					level = NULL;
 					
 					break;
 					
@@ -1356,15 +1452,16 @@ int main() {
 		
 		}
 	
+
 	}
 	
 }
 
-int runLevel(Level &level, int index) {
+int runLevel(Level *level, int index) {
 	
 	int returned;
 	
-	returned = ( (Options[ENGINE_VERSION] == "Delayed")?level.engine():level.engine2() );
+	returned = ( (Options[ENGINE_VERSION] == "Delayed")?level->engine():level->engine2() );
 	
 	if (returned % 2 == 1) { //returned == 1 || returned == 3
 		beaten[index] = true;
